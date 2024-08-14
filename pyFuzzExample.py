@@ -20,12 +20,17 @@ s, e = fe.gen(314)
 ep = fe.recov(s, 315)
 print(e, ep, np.array_equal(e, ep))
 
-# far
-ep = fe.recov(s, 168)
+# close
+ep = fe.recov(s, 414)
 print(e, ep, np.array_equal(e, ep))
 
 # close
-ep = fe.recov(s, 414)
+ep = fe.recov(s, 203)
+print(e, ep, np.array_equal(e, ep))
+
+
+# far
+ep = fe.recov(s, 168)
 print(e, ep, np.array_equal(e, ep))
 
 # far
@@ -36,9 +41,7 @@ print(e, ep, np.array_equal(e, ep))
 ep = fe.recov(s, 300)
 print(e, ep, np.array_equal(e, ep))
 
-# close
-ep = fe.recov(s, 203)
-print(e, ep, np.array_equal(e, ep))
+
 
 # I should probably look into what
 # other values are 'close enough' 
