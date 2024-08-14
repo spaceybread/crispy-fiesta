@@ -4,7 +4,7 @@
 
 ### Init
 
-To create a Fuzzy Extractor, define a ```lattice`` and ``lattice_dim``` as below: 
+To create a Fuzzy Extractor, define a ```lattice``` and ```lattice_dim``` as below: 
 ```py
 fe = FuzzyExtractor(lattice, lattice_dim)
 ```
