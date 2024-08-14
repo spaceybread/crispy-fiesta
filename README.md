@@ -12,14 +12,12 @@ The ```lattice``` must be a 2D array ($n \times n$) where ```lattice_dim``` = n
 
 ### Generate
 
-To generate: 
 ```py
 s, e = fe.gen(value)
 ```
 
 ### Recover
 
-To recover: 
 ```py
 ep = fe.recov(s, another_value)
 ```
@@ -47,3 +45,7 @@ print(e, ep, np.array_equal(e, ep))
 ```
 
 For more examples, look at [pyFuzzExample.py](https://github.com/spaceybread/crispy-fiesta/blob/main/pyFuzzExample.py)
+
+## Notes
+
+Currently, this only works with numeric values. 
