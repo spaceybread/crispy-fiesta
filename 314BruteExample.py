@@ -10,7 +10,7 @@ lat = [
 
 all = set()
 
-for _ in range(1000):
+for _ in range(100):
     # init at different instances results in some
     # differences, which is expected since 
     # FuzzyExtractor picks random coeffs each time
