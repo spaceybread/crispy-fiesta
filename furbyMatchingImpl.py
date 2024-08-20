@@ -1,35 +1,52 @@
 from pyFuzzImpl import FuzzyExtractor
 import numpy as np
 
-def makeHelpers(FE: FuzzyExtractor, A):
-    keys, helpers = [], []
+class FuzzyMatching:
+    # constructor for FSM, simply accepts 
+    # a Fuzzy Extractor object
+    def __init__(self, FE: FuzzyExtractor):
+        self.FE = FE
 
-    for a in A:
-        h, k = FE.gen(a)
-        keys.append(k)
-        helpers.append(h)
+    # for every element in A, compute the 
+    # key-helper pair and save it, in order
+    def makeHelpers(self, A):
+        keys, helpers = [], []
+
+        for a in A:
+            h, k = self.FE.gen(a)
+            keys.append(k)
+            helpers.append(h)
     
-    return keys, helpers
+        return keys, helpers
 
-def attemptMatching(FE: FuzzyExtractor, A_H, B): 
-    #recov = np.zeros((len(A_H), len(B)))
-    recov = [[None for _ in range(len(B))] for _ in range(len(A_H))]
+    # take the helpers and the *other* set and
+    # compute the resulting keys for all pairs
+    def attemptMatching(self, A_H, B): 
+        #recov = np.zeros((len(A_H), len(B)))
+        recov = [[None for _ in range(len(B))] for _ in range(len(A_H))]
+        # this doesn't seem to like working with
+        # the numpy 2D matrix init so I have kept the
+        # old def for the matrix here
 
-    for i in range(len(B)):
-        for j in range(len(A_H)):
-            #print(FE.recov(A_H[j], B[i]))
-            recov[j][i] = FE.recov(A_H[j], B[i])
+        for i in range(len(B)):
+            for j in range(len(A_H)):
+                recov[j][i] = self.FE.recov(A_H[j], B[i])
     
-    return recov
+        return recov
 
-def returnMatches(R, A, A_K):
-    out = []
+    # with all possible recovered pairs and the
+    # original list of keys, do a pair wise check
+    # and find matches
+    def returnMatches(self, R, A, A_K):
+        out = []
 
-    for i in range(len(R)):
-        for j in range(len(R[i])):
-            for k in range(len(A_K)):
-                if np.array_equal(A_K[k], R[i][j]):
-                    out.append(A[k])
+        for i in range(len(R)):
+            for j in range(len(R[i])):
+                for k in range(len(A_K)):
+                    if np.array_equal(A_K[k], R[i][j]):
+                        out.append(A[k])
 
-    out = list(set(out))
-    return sorted(out)
+        # set to remove duplicates
+        # sort so that it looks nice
+        out = list(set(out))
+        return sorted(out)
