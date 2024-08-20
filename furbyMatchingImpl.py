@@ -31,5 +31,5 @@ def returnMatches(R, A, A_K):
                 if np.array_equal(A_K[k], R[i][j]):
                     out.append(A[k])
 
-
-    return out
+    out = list(set(out))
+    return sorted(out)
