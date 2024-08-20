@@ -22,14 +22,14 @@ def attemptMatching(FE: FuzzyExtractor, A_H, B):
     
     return recov
 
-def returnMatches(R, A_K):
+def returnMatches(R, A, A_K):
     out = []
 
     for i in range(len(R)):
         for j in range(len(R[i])):
             for k in range(len(A_K)):
                 if np.array_equal(A_K[k], R[i][j]):
-                    out.append(A_K[k])
+                    out.append(A[k])
 
 
     return out
