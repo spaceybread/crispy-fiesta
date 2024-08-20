@@ -1,7 +1,7 @@
 from pyFuzzImpl import FuzzyExtractor
 import numpy as np
 
-lat = np.eye(4)
+# lat = np.eye(4)
 # standard basis, there's no point to using
 # this 
 

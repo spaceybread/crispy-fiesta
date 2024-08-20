@@ -10,6 +10,8 @@ lat = [
 
 all = set()
 
+GEN_NUM = int(input())
+
 for _ in range(100):
     # init at different instances results in some
     # differences, which is expected since 
@@ -18,7 +20,7 @@ for _ in range(100):
     # similar sometimes while not close other times
 
     fe = FuzzyExtractor(lat, 4)
-    s, e = fe.gen(314)
+    s, e = fe.gen(GEN_NUM)
 
     for i in range(9):
         for j in range(9):
@@ -27,7 +29,7 @@ for _ in range(100):
                 ep = fe.recov(s, n)
                 if np.array_equal(e, ep):
                     if n not in all:
-                        print(_, n)
+                        print(_, n, ep, e)
                         all.add(n)
             
 print(sorted(list(all)))
