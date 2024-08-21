@@ -42,9 +42,8 @@ class FuzzyMatching:
 
         for i in range(len(R)):
             for j in range(len(R[i])):
-                for k in range(len(A_K)):
-                    if np.array_equal(A_K[k], R[i][j]):
-                        out.append(A[k])
+                if np.array_equal(A_K[i], R[i][j]):
+                    out.append(A[i])
 
         # set to remove duplicates
         # sort so that it looks nice
