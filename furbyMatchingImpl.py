@@ -44,8 +44,23 @@ class FuzzyMatching:
             for j in range(len(R[i])):
                 if np.array_equal(A_K[i], R[i][j]):
                     out.append(A[i])
+                    
 
         # set to remove duplicates
         # sort so that it looks nice
         out = list(set(out))
+        return sorted(out)
+
+    # debug function that works almost exactly
+    # the same as the function above but returns
+    # the matched pairs
+    def returnMatchesAsPairs(self, R, A, A_K, B):
+        out = []
+
+        for i in range(len(R)):
+            for j in range(len(R[i])):
+                if np.array_equal(A_K[i], R[i][j]):
+                    out.append((A[i], B[j]))
+                    
+        # sort so that it looks nice
         return sorted(out)
