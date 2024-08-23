@@ -9,7 +9,7 @@ out = []
 FEZ = FuzzyExtractor(LATTICE, 4)
 FM = FuzzyMatching(FEZ)
 
-S_A = [314, 168, 159, 333, 819]
+S_A = [314]
 S_B = [i for i in range(1000)]
     
 
