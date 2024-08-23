@@ -9,7 +9,7 @@ out = []
 FEZ = FuzzyExtractor(LATTICE, 4)
 FM = FuzzyMatching(FEZ)
 
-S_A = [314]
+S_A = [314, 168, 159, 333, 819, 606, 111, 654, 554, 124]
 S_B = [i for i in range(1000)]
     
 
@@ -26,4 +26,4 @@ final = FM.returnMatches(rec, S_A, keys)
 for l in finalDebug:
     print(*l)
 
-print(final)
+print(str(len(S_A)) + " x " + str(len(S_B)) + ": " + str(final))
