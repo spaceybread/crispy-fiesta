@@ -99,3 +99,14 @@ This is available under [furbyMatchingExample.py](https://github.com/spaceybread
 ## Notes
 
 Currently, this only works with numeric values. 
+
+## TODO 
+
+[] Make it work with the Leech Lattice: 
+    - https://www.math.rwth-aachen.de/~Gabriele.Nebe/LATTICES/Leech.html
+    - http://neilsloane.com/doc/Me116.pdf
+    - https://github.com/kzoacn/Leech
+
+[] Rework the message encoding: 
+    - Do not split by decimal places, that's slow and useless
+    - Chunk by 4-bytes, we don't know lattices larger than 24 dims with fast decoding with high packing density. 
