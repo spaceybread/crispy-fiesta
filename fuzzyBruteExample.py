@@ -18,7 +18,8 @@ lat = [
 
 all = set()
 
-GEN_NUM = int(input())
+GEN_NUM = 314
+#GEN_NUM = int(input())
 
 for _ in range(100):
     # init at different instances results in some
@@ -37,7 +38,7 @@ for _ in range(100):
                 ep = fe.recov(s, n)
                 if np.array_equal(e, ep):
                     if n not in all:
-                        print(_, n, ep, e)
+                        #print(_, n, ep, e)
                         all.add(n)
             
 print(sorted(list(all)))
