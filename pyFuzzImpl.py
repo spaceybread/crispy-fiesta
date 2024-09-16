@@ -62,7 +62,7 @@ class FuzzyExtractor:
          
         return e_final
 
-class LeechFuzzyExtractor:
+class LeechFuzzyExtractor(FuzzyExtractor):
     def __init__(self, k):
         self.K = k
     
@@ -81,8 +81,8 @@ class LeechFuzzyExtractor:
     # handles type conversion
     def gen(self, w):
         # format the input into a 24 integer vector
-        #out = self.genFromVector(w)
-        pass
+        # currently, it does no preprocessing
+        return self.genFromVector(w)
     
     # given some point and a vector, 
     # find the closest lattice point
@@ -90,7 +90,8 @@ class LeechFuzzyExtractor:
     def recov(self, bs, w):
         # format w into a 24 integer vector
         # and pass it into recovFromVector
-        pass
+        # currently, it does no preprocessing
+        return self.recovFromVector(bs, w)
     
     # helper for gen, works specifically
     # with vectors
