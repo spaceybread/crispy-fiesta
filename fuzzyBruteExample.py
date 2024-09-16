@@ -8,6 +8,14 @@ lat = [
     [0, 1, 1, 3]
 ]
 
+lat = [
+    [2, 0, 0, 0],
+    [0, 2, 0, 0],
+    [0, 0, 2, 0], 
+    [0, 0, 0, 2]
+]
+# Gaussian Lattice with scale 4
+
 all = set()
 
 GEN_NUM = int(input())
