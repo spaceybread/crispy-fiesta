@@ -66,17 +66,49 @@ class LeechFuzzyExtractor:
     def __init__(self, k):
         self.K = k
     
+    # (helper) snap to the closest point in the
+    # lattice, under K-step increments
     def closest(self, w):
         return Leech.decode(w, self.K)
 
+    # (helper) hash a point/vector
     def hashVector(self, v):
         b = bytes(v)
         return sha256(b).hexdigest()
 
+    # given an input w, generate the 
+    # vector and snapped point
+    # handles type conversion
     def gen(self, w):
+        # format the input into a 24 integer vector
+        #out = self.genFromVector(w)
         pass
+    
+    # given some point and a vector, 
+    # find the closest lattice point
+    # handles type conversion
+    def recov(self, bs, w):
+        # format w into a 24 integer vector
+        # and pass it into recovFromVector
+        pass
+    
+    # helper for gen, works specifically
+    # with vectors
+    def genFromVector(self, w):
+        ws = np.array(w)
 
-    def recov(self, w):
-        pass
+        es = np.zeros(24, dtype=int)
+        for i in range(24): es[i] = rdm.randint(1, 999)
+        es = self.closest(es)
+
+        bs = es - ws
+        return bs, self.hashVector(es)
+
+    # helper for recov, works specifically
+    # with vectors
+    def recovFromVector(self, bs, ws):
+        e_prime = ws + bs
+        e_prime = self.closest(e_prime)
+        return self.hashVector(e_prime)
 
     

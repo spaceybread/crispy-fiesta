@@ -94,4 +94,3 @@ def demo():
         out = Leech.decode(x, 2)
         print(out)
 
-demo()
