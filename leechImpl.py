@@ -91,6 +91,7 @@ class Leech:
 def demo():
     while True:
         x = numpy.array([int(x) for x in input().split()])
-        out = Leech.decode(x,5)
+        out = Leech.decode(x, 2)
         print(out)
 
+demo()

@@ -1,6 +1,7 @@
 import random as rdm
-import hashlib as hl
+from hashlib import sha256
 import numpy as np
+from leechImpl import Leech
 
 class FuzzyExtractor: 
     def __init__(self, lattice, lattice_dim, k=9):
@@ -60,3 +61,22 @@ class FuzzyExtractor:
         # point
          
         return e_final
+
+class LeechFuzzyExtractor:
+    def __init__(self, k):
+        self.K = k
+    
+    def closest(self, w):
+        return Leech.decode(w, self.K)
+
+    def hashVector(self, v):
+        b = bytes(v)
+        return sha256(b).hexdigest()
+
+    def gen(self, w):
+        pass
+
+    def recov(self, w):
+        pass
+
+    
