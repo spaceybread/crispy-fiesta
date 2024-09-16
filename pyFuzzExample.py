@@ -13,6 +13,14 @@ lat = [
 ]
 # I just picked some small values randomly
 
+lat = [
+    [4, 0, 0, 0],
+    [0, 4, 0, 0],
+    [0, 0, 4, 0], 
+    [0, 0, 0, 4]
+]
+# Gaussian Lattice with scale 4
+
 fe = FuzzyExtractor(lat, 4)
 s, e = fe.gen(314)
 
