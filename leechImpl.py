@@ -85,10 +85,12 @@ class Leech:
 
 
 
-T=10
-while T>0:
-    x=numpy.array([int(x) for x in input().split()])
-    for t in Leech.decode(x,5):
-        sys.stdout.write(str(t)+' ')
-    sys.stdout.write('\n')
-    T-=1
+# Demo!
+# Accepts a vector with 24 integers and then decodes it
+
+def demo():
+    while True:
+        x = numpy.array([int(x) for x in input().split()])
+        out = Leech.decode(x,5)
+        print(out)
+
