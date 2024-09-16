@@ -9,8 +9,8 @@ for i in range(24):
 
 # Gaussian Lattice with scale 2 and 24 dimensions
 
-for l in lat:
-    print(l)
+#for l in lat:
+#    print(l)
 
 all = set()
 
