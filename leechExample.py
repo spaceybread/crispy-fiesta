@@ -1,4 +1,5 @@
 from pyFuzzImpl import LeechFuzzyExtractor
+from furbyMatchingImpl import FuzzyMatching
 
 # init the fuzzy extractor
 FE = LeechFuzzyExtractor(3)
@@ -24,3 +25,17 @@ print(c2)
 
 # compare hashes
 print(e == c1, e == c2)
+
+# since FuzzyMatching accepts FuzzyExtractors as an argument,
+# it is possible to just pass the Leech FE into it
+
+FM = FuzzyMatching(FE)
+
+S_A = [initial, [999] * 24]
+S_B = [close, far]
+
+keys, helpers = FM.makeHelpers(S_A)
+rec = FM.attemptMatching(helpers, S_B)
+final = FM.returnMatchesAsHashes(rec, S_A, keys)
+
+print(final)
