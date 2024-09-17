@@ -1,11 +1,5 @@
-from pyFuzzImpl import FuzzyExtractor
+from pyFuzzImpl import GaussFuzzyExtractor
 import numpy as np
-
-lat = []
-
-for i in range(24):
-    line = [0] * i + [2] + [0] * (23 - i)
-    lat.append(line)
 
 # Gaussian Lattice with scale 2 and 24 dimensions
 
@@ -16,6 +10,7 @@ all = set()
 
 GEN_NUM = 314
 #GEN_NUM = int(input())
+fe = GaussFuzzyExtractor(16, 2)
 
 for _ in range(10):
     # init at different instances results in some
@@ -24,12 +19,11 @@ for _ in range(10):
     # it is init, as such, some values are considered
     # similar sometimes while not close other times
 
-    fe = FuzzyExtractor(lat, 24)
     s, e = fe.gen(GEN_NUM)
 
-    for i in range(9):
-        for j in range(9):
-            for k in range(9):
+    for i in range(10):
+        for j in range(10):
+            for k in range(10):
                 n = i * 100 + j * 10 + k
                 ep = fe.recov(s, n)
                 if np.array_equal(e, ep):
@@ -38,3 +32,4 @@ for _ in range(10):
                         all.add(n)
             
 print(sorted(list(all)))
+print(len(all))
