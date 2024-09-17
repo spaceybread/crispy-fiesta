@@ -93,9 +93,8 @@ class GaussFuzzyExtractor(FuzzyExtractor):
         # there's probably a clean way to
         # do this with numpy
         for i in range(self.dim):
-            for j in range(self.dim):
-                c = rdm.randint(1, self.k)
-                es[j] += self.lattice[i][j] * c
+            es[i] = rdm.randint(-1000, 1000)
+        print(*es)
         
         es = self.closest(es, self.lattice)
         # after finding a random point in R^n, 
