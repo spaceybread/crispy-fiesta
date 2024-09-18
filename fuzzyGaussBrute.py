@@ -22,7 +22,7 @@ for _ in range(TESTS):
 
     n = rdm.randint(3 * GEN_NUM // 4, GEN_NUM + GEN_NUM // 4)
     ep = fe.recov(s, n)
-    if np.array_equal(e, ep):
+    if e == ep:
         if n not in all:
             #print(_, n, ep, e)
             all.add(n)

@@ -87,6 +87,11 @@ class GaussFuzzyExtractor(FuzzyExtractor):
             if (x[i] - math.floor(x[i])) > threshold: x[i] = math.ceil(x[i])
             else: x[i] = math.floor(x[i])
         return x
+
+    # (helper) hash a point/vector
+    def hashVector(self, v):
+        b = bytes(v)
+        return sha256(b).hexdigest()
     
     # take a point in R^n and find the closest
     # lattice point
@@ -117,7 +122,7 @@ class GaussFuzzyExtractor(FuzzyExtractor):
         ws = ws[::-1]
 
         bs = es - ws 
-        return bs, es
+        return bs, self.hashVector(es)
 
     # given some point and the vector, find
     # the closest lattice point
@@ -136,7 +141,7 @@ class GaussFuzzyExtractor(FuzzyExtractor):
         # point, snap it to a lattice
         # point
          
-        return e_final
+        return self.hashVector(e_final)
 
 class LeechFuzzyExtractor(FuzzyExtractor):
     def __init__(self, k):
