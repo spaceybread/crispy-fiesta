@@ -2,6 +2,7 @@ import random as rdm
 from hashlib import sha256
 import numpy as np
 from leechImpl import Leech
+import math
 
 class FuzzyExtractor: 
     def __init__(self, lattice, lattice_dim, k=9):
@@ -63,13 +64,14 @@ class FuzzyExtractor:
         return e_final
     
 class GaussFuzzyExtractor(FuzzyExtractor): 
-    def __init__(self, lattice_dim, scale, k = 9):
+    def __init__(self, lattice_dim, scale, threshold = -1, k = 9):
         # the lattice is defined by a 2D numpy
         # array [dim x dim] where lattice[i] 
         # represents a basis vector
         self.dim = lattice_dim
         self.scale = scale
         self.k = k
+        self.th = threshold
         
         lat = []
         for i in range(lattice_dim):
@@ -78,12 +80,21 @@ class GaussFuzzyExtractor(FuzzyExtractor):
 
         self.lattice = lat
 
+    # custom round function with variable threshold
+    # for a list
+    def round(self, x, threshold):
+        for i in range(len(x)):
+            if (x[i] - math.floor(x[i])) > threshold: x[i] = math.ceil(x[i])
+            else: x[i] = math.floor(x[i])
+        return x
+    
     # take a point in R^n and find the closest
     # lattice point
     def closest(self, p, B):
-        z = np.round(np.linalg.solve(B, p))
-        return B @ z
-    
+        if self.th == -1:
+            return B @ np.round(np.linalg.solve(B, p))
+        return B @ self.round(np.linalg.solve(B, p), self.th)
+
 
     # get the vector and the snapped point
     def gen(self, w):

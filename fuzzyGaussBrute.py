@@ -8,10 +8,10 @@ import random as rdm
 #    print(l)
 
 all = set()
-GEN_NUM = 314159
-fe = GaussFuzzyExtractor(10, 2)
+GEN_NUM = 3141
+fe = GaussFuzzyExtractor(10, 2, 0.5)
 s, e = fe.gen(GEN_NUM)
-TESTS = 100000
+TESTS = 1000
 
 for _ in range(TESTS):
     # init at different instances results in some
@@ -26,7 +26,7 @@ for _ in range(TESTS):
         if n not in all:
             #print(_, n, ep, e)
             all.add(n)
-            
+
 print(sorted(list(all)))
 print(len(all))
 print(len(all) / TESTS)
