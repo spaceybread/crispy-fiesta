@@ -142,9 +142,8 @@ fn compareVec(a: Vec<f64>, b: Vec<f64>) -> bool {
     return true;
 }
 
-
-
-fn main() {
+// (Demo) Single encode and decode
+fn demo1() {
     env::set_var("RUST_BACKTRACE", "1");
     let dim = 16;
     let lat = makeLattice(5, dim);
@@ -174,4 +173,31 @@ fn main() {
     println!("Are both vectors the same: {:?}", compareVec(vec.clone(), another.clone()));
     println!("Do both get the same assigned point: {:?}", res.1 == rec);
     println!("{:?}", rec);
+}
+
+// (Demo) Single encode and multiple decodes
+fn demo2() {
+    env::set_var("RUST_BACKTRACE", "1");
+    let dim = 16;
+    let lat = makeLattice(5, dim);
+
+    let mut vec = randomVector(dim as usize);
+    
+    for i in 0..dim{
+        vec[i] = (i as f64) * 1.5;
+    }
+    let res = gen(vec.clone(), lat.clone());
+    println!("{:?}", res.1);
+
+    for i in 0..32 {
+        let mut another = randomVector(dim as usize);
+        let rec = recov(res.0.clone(), another.clone(), lat.clone());
+        println!("{:?}", rec);
+    }
+}
+
+fn main() {
+    for i in 0..100 {
+        demo2();
+    }
 }
