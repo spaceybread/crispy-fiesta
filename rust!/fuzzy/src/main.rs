@@ -154,7 +154,7 @@ fn main() {
     for i in 0..dim{
         vec[i] = (i as f64) * 1.5;
     }
-    
+
     // println!("{:?}", vec.clone());
 
     let res = gen(vec.clone(), lat.clone());
@@ -174,5 +174,4 @@ fn main() {
     println!("Are both vectors the same: {:?}", compareVec(vec.clone(), another.clone()));
     println!("Do both get the same assigned point: {:?}", res.1 == rec);
     println!("{:?}", rec);
-
 }
