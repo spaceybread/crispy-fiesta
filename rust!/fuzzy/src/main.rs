@@ -1,4 +1,6 @@
 use sha2::{Sha256, Digest};
+use nalgebra::{DMatrix, DVector};
+use std::env;
 
 // Make the lattice given the constraints
 fn makeLattice(scale: i32, dim: usize) -> Vec<Vec<f64>> {
@@ -13,6 +15,19 @@ fn makeLattice(scale: i32, dim: usize) -> Vec<Vec<f64>> {
     }
     return lattice;
 }
+
+fn makeLatticeAs1DVector(lat: Vec<Vec<f64>>, dim: usize) -> Vec<f64> {
+    let mut vec = vec![0.0; dim * dim];
+    let mut c = 0;
+    for i in 0..dim {
+        for j in 0..dim {
+            vec[c] = lat[i][j]; 
+            c += 1;
+        }
+    }
+    return vec;
+}
+
 
 // (Helper) To visualise the lattice and check for correctness
 fn printLattice(lattice: Vec<Vec<f64>>) {
@@ -49,16 +64,39 @@ fn hashVector(vec: Vec<f64>) -> String {
     hex::encode(result)
 }
 
+fn closest(vec: Vec<f64>, lattice: Vec<Vec<f64>>) -> Vec<f64> {
+    let p = DVector::from_vec(vec);
+    let flatLattice = makeLatticeAs1DVector(lattice.clone(), lattice.len() as usize);
+    let B = DMatrix::from_vec(lattice.len(), lattice.len(), flatLattice);
+    
+    if  B.is_invertible() == false {
+        return vec![0.0];
+    }
+
+    let inv_B = B.clone().try_inverse().unwrap();
+    let coeff = inv_B * p;
+    let coeffVec = coeff.data.as_vec().clone();
+    let rounded = DVector::from_vec(round(coeffVec, 0.51));
+    let almostOut = B * rounded;
+
+    return almostOut.data.as_vec().clone();
+}
+
 
 fn main() {
-    let mut test = vec![0.5; 4];
-    let mut hash = hashVector(round(test, 0.7));
-    
-    println!("{:?}", hash);
+    env::set_var("RUST_BACKTRACE", "1");
+    let dim = 16;
+    let lat = makeLattice(3, dim);
 
-    test = vec![0.0; 4];
-    hash = hashVector(test.clone());
-
-    println!("{:?}", hash);
+    let mut vec = vec![0.0; dim];
     
+    for i in 0..dim{
+        vec[i] = (i as f64) * 1.5;
+    }
+    println!("{:?}", vec.clone());
+
+    let close = closest(vec.clone(), lat);
+
+    println!("{:?}", close.clone());
+
 }
