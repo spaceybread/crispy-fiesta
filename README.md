@@ -44,7 +44,7 @@ ep = fe.recov(s, 168)
 print(e, ep, np.array_equal(e, ep))
 ```
 
-For more examples, look at [pyFuzzExample.py](https://github.com/spaceybread/crispy-fiesta/blob/main/pyFuzzExample.py)
+For more examples, look at [pyFuzzExample.py](https://github.com/spaceybread/crispy-fiesta/blob/main/pyImpl/pyFuzzExample.py)
 
 # Fuzzy Matching
 
@@ -94,7 +94,7 @@ keys, helpers = FM.makeHelpers(S_A)
 rec = FM.attemptMatching(helpers, S_B)
 final = FM.returnMatches(rec, S_A, keys)
 ```
-This is available under [furbyMatchingExample.py](https://github.com/spaceybread/crispy-fiesta/blob/main/furbyMatchingExample.py)
+This is available under [furbyMatchingExample.py](https://github.com/spaceybread/crispy-fiesta/blob/main/pyImpl/furbyMatchingExample.py)
 
 ## Notes
 
