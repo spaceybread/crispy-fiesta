@@ -2,6 +2,7 @@ use sha2::{Sha256, Digest};
 use nalgebra::{DMatrix, DVector};
 use std::env;
 use rand::Rng;
+use std::time::Instant;
 
 // Make the lattice given the constraints
 fn makeLattice(scale: i32, dim: usize) -> Vec<Vec<f64>> {
@@ -196,8 +197,15 @@ fn demo2() {
     }
 }
 
-fn main() {
-    for i in 0..100 {
+fn timedDemo() {
+    let now = Instant::now();
+    for i in 0..3200 {
         demo2();
     }
+    let elapsed = now.elapsed();
+    println!("Elapsed: {:.2?}", elapsed);
+}
+
+fn main() {
+    timedDemo();
 }
