@@ -19,8 +19,14 @@ fn makeLattice(scale: i32, dim: usize) -> Vec<Vec<f64>> {
 }
 
 // Make the leech lattice
-fn makeLeechLattice() -> Vec<Vec<f64>> {
+fn getLeechLattice() -> Vec<f64> {
     let out = vec![8.0,4.0,4.0,4.0,4.0,4.0,4.0,2.0,4.0,4.0,4.0,2.0,4.0,2.0,2.0,2.0,4.0,2.0,2.0,2.0,0.0,0.0,0.0,-3.0,4.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,1.0,2.0,1.0,1.0,2.0,1.0,0.0,0.0,-1.0,4.0,2.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,2.0,1.0,2.0,2.0,1.0,1.0,1.0,0.0,0.0,-1.0,4.0,2.0,2.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,1.0,2.0,2.0,1.0,2.0,1.0,1.0,0.0,0.0,-1.0,4.0,2.0,2.0,2.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,0.0,0.0,-1.0,4.0,2.0,2.0,2.0,2.0,4.0,2.0,2.0,2.0,2.0,2.0,1.0,2.0,2.0,1.0,1.0,2.0,1.0,2.0,1.0,0.0,0.0,0.0,-1.0,4.0,2.0,2.0,2.0,2.0,2.0,4.0,2.0,2.0,2.0,2.0,1.0,2.0,1.0,2.0,1.0,2.0,1.0,1.0,2.0,0.0,0.0,0.0,-1.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,4.0,1.0,1.0,1.0,2.0,1.0,2.0,2.0,2.0,1.0,2.0,2.0,2.0,2.0,0.0,0.0,1.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,1.0,1.0,-1.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,2.0,4.0,2.0,2.0,2.0,2.0,1.0,1.0,2.0,2.0,1.0,1.0,0.0,1.0,0.0,-1.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,2.0,2.0,4.0,2.0,2.0,1.0,2.0,1.0,2.0,1.0,2.0,1.0,0.0,0.0,1.0,-1.0,2.0,2.0,2.0,2.0,1.0,1.0,1.0,2.0,2.0,2.0,2.0,4.0,1.0,2.0,2.0,2.0,1.0,2.0,2.0,2.0,2.0,1.0,1.0,1.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,2.0,2.0,2.0,1.0,4.0,2.0,2.0,2.0,2.0,1.0,1.0,1.0,1.0,1.0,1.0,-1.0,2.0,2.0,1.0,1.0,2.0,2.0,1.0,2.0,2.0,2.0,1.0,2.0,2.0,4.0,2.0,2.0,1.0,2.0,2.0,2.0,2.0,2.0,1.0,1.0,2.0,1.0,2.0,1.0,2.0,1.0,2.0,2.0,2.0,1.0,2.0,2.0,2.0,2.0,4.0,2.0,1.0,2.0,2.0,2.0,2.0,1.0,2.0,1.0,2.0,1.0,1.0,2.0,2.0,1.0,1.0,2.0,2.0,1.0,1.0,2.0,2.0,2.0,2.0,4.0,1.0,2.0,2.0,2.0,2.0,1.0,1.0,1.0,4.0,2.0,2.0,2.0,2.0,2.0,2.0,1.0,2.0,2.0,2.0,1.0,2.0,1.0,1.0,1.0,4.0,2.0,2.0,2.0,1.0,1.0,1.0,-1.0,2.0,1.0,2.0,1.0,2.0,1.0,1.0,2.0,2.0,2.0,1.0,2.0,1.0,2.0,2.0,2.0,2.0,4.0,2.0,2.0,2.0,2.0,1.0,1.0,2.0,1.0,1.0,2.0,2.0,2.0,1.0,2.0,2.0,1.0,2.0,2.0,1.0,2.0,2.0,2.0,2.0,2.0,4.0,2.0,2.0,1.0,2.0,1.0,2.0,2.0,1.0,1.0,2.0,1.0,2.0,2.0,2.0,1.0,1.0,2.0,1.0,2.0,2.0,2.0,2.0,2.0,2.0,4.0,2.0,1.0,1.0,1.0,0.0,1.0,1.0,1.0,1.0,0.0,0.0,2.0,1.0,0.0,0.0,2.0,1.0,2.0,2.0,2.0,1.0,2.0,2.0,2.0,4.0,2.0,2.0,2.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,1.0,0.0,1.0,1.0,2.0,1.0,1.0,1.0,2.0,1.0,1.0,2.0,4.0,2.0,2.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,1.0,1.0,1.0,1.0,2.0,1.0,1.0,1.0,2.0,1.0,2.0,2.0,4.0,2.0,-3.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,-1.0,-1.0,-1.0,1.0,-1.0,1.0,1.0,1.0,-1.0,1.0,1.0,1.0,2.0,2.0,2.0,4.0];
+    return out;
+}
+
+// Make the leech lattice
+fn makeLeechLattice() -> Vec<Vec<f64>> {
+    let out = getLeechLattice();
     let mut lattice = vec![vec![0.0; 24]; 24];
     let mut c = 0;
     for i in 0..24 {
@@ -100,6 +106,24 @@ fn closest(vec: Vec<f64>, lattice: Vec<Vec<f64>>) -> Vec<f64> {
     return almostOut.data.as_vec().clone();
 }
 
+// (Helper) Find the closest point in the lattice
+fn closest1D(vec: Vec<f64>, lattice: Vec<f64>, size: i32) -> Vec<f64> {
+    let p = DVector::from_vec(vec);
+    let B = DMatrix::from_vec(size as usize, size as usize, lattice);
+    
+    if  B.is_invertible() == false {
+        return vec![0.0];
+    }
+
+    let inv_B = B.clone().try_inverse().unwrap();
+    let coeff = inv_B * p;
+    let coeffVec = coeff.data.as_vec().clone();
+    let rounded = DVector::from_vec(round(coeffVec, 0.51));
+    let almostOut = B * rounded;
+
+    return almostOut.data.as_vec().clone();
+}
+
 // (Helper) Subtract two vectors
 fn vectorSubtraction(a: Vec<f64>, b: Vec<f64>) -> Vec<f64> {
     let mut out = vec![0.0; a.len() as usize];
@@ -140,6 +164,23 @@ fn gen(vec: Vec<f64>, lat: Vec<Vec<f64>>) -> (Vec<f64>, String) {
 fn recov(helper: Vec<f64>, vec: Vec<f64>, lat: Vec<Vec<f64>>) -> String {
     let mut out = vectorAddition(helper, vec);
     out = closest(out.clone(), lat);
+    
+    return hashVector(out);
+}
+
+// Generate a helper point and hash point from a vector
+fn gen1D(vec: Vec<f64>, lat: Vec<f64>, size: i32) -> (Vec<f64>, String) {
+    let mut rdm = randomVector(vec.len() as usize);
+    rdm = closest1D(rdm.clone(), lat, size);
+    let helper = vectorSubtraction(rdm.clone(), vec.clone());
+    
+    return (helper, hashVector(rdm))
+}
+
+// Generate a hashed point given a helper and a vector
+fn recov1D(helper: Vec<f64>, vec: Vec<f64>, lat: Vec<f64>, size: i32) -> String {
+    let mut out = vectorAddition(helper, vec);
+    out = closest1D(out.clone(), lat, size);
     
     return hashVector(out);
 }
@@ -212,16 +253,44 @@ fn demo2() {
     }
 }
 
+fn demo3() {
+    env::set_var("RUST_BACKTRACE", "1");
+    let dim = 24;
+    // let lat = makeLattice(5, dim);
+    let lat = getLeechLattice();
+
+    let mut vec = randomVector(dim as usize);
+    
+    for i in 0..dim{
+        vec[i] = (i as f64) * 1.5;
+    }
+    let res = gen1D(vec.clone(), lat.clone(), 24);
+    println!("{:?}", res.1);
+
+    for i in 0..32 {
+        let mut another = randomVector(dim as usize);
+        let rec = recov1D(res.0.clone(), another.clone(), lat.clone(), 24);
+        println!("{:?}", rec);
+    }
+}
+
 // (Demo) Runs demo2 ite times and times it 
-fn timedDemo(ite: i32) {
+fn timedDemo(ite: i32, mode: i8) {
     let now = Instant::now();
     for i in 0..ite {
-        demo2();
+        if mode == 0 {
+            // with flattening
+            demo2();
+        } else {
+            // without flattening
+            demo3();
+        } 
+        
     }
     let elapsed = now.elapsed();
     println!("Elapsed: {:.2?}", elapsed);
 }
 
 fn main() {
-    timedDemo(32000);
+    timedDemo(100, 0);
 }
