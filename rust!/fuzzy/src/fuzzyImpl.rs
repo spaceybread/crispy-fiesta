@@ -125,6 +125,7 @@ pub fn closest1D(vec: Vec<f64>, lattice: Vec<f64>, size: i32) -> Vec<f64> {
 }
 
 pub fn closestGauss(vec: Vec<f64>, scale: i32) {
+    
 }
 
 // (Helper) Subtract two vectors
@@ -149,7 +150,7 @@ pub fn vectorAddition(a: Vec<f64>, b: Vec<f64>) -> Vec<f64> {
 pub fn randomVector(dim: usize) -> Vec<f64> {
     let mut out = vec![0.0; dim];
     for i in 0..dim {
-        out[i] = rand::thread_rng().gen_range(-1000..1000) as f64;
+        out[i] = rand::thread_rng().gen_range(0..100) as f64;
     }
     return out
 }
