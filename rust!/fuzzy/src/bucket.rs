@@ -89,12 +89,22 @@ impl Bucket {
         panic!("ID not in the bucket");
     }
 
+    pub fn getCandidatesFromID(&mut self, id: String) -> Vec<Vec<f64>> {
+        if self.bucket.contains_key(&id) {
+            if let Some(x) = self.bucket.get_mut(&id) {
+                return x.clone();
+            } 
+        }
+
+        panic!("ID not in the bucket");
+    }
+
 }
 
 pub struct GaussBucket {
     bucket: HashMap<String, Vec<Vec<f64>>>,
     param: i32,
-    scale : i32,
+    pub scale : i32,
 }
 
 impl GaussBucket {
@@ -172,12 +182,41 @@ impl GaussBucket {
             } 
         }
 
-        panic!("ID not in the bucket");
+        return vec![];
+    }
+
+    pub fn getCandidatesFromID(&mut self, id: String) -> Vec<Vec<f64>> {
+        if self.bucket.contains_key(&id) {
+            if let Some(x) = self.bucket.get_mut(&id) {
+                return x.clone();
+            } 
+        }
+
+        return vec![];
     }
 
 }
 
+impl Clone for GaussBucket {
+    fn clone(&self) -> GaussBucket {
+        GaussBucket {
+            bucket: self.bucket.clone(),
+            param: self.param,
+            scale: self.scale,
+        }
+    }
+}
 
+impl Clone for Bucket {
+    fn clone(&self) -> Bucket {
+        Bucket {
+            bucket: self.bucket.clone(),
+            param: self.param,
+            lattice: self.lattice.clone(),
+            dim: self.dim,
+        }
+    }
+}
 
 
 

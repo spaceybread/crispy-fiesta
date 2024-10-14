@@ -6,6 +6,7 @@ use std::time::Instant;
 mod fuzzyImpl;
 mod bucket;
 mod gaussFuzzy;
+mod gaussPSM;
 
 // (Demo) Single encode and decode
 fn demo1() {
@@ -160,7 +161,7 @@ fn bucketDemo() {
 
 }
 
-fn dragRace(doNormal: bool, doGauss: bool, doLeechBucket: bool, doGaussBucket: bool) {
+fn dragRace(doNormal: bool, doGauss: bool, doLeechBucket: bool, doGaussBucket: bool, doGaussPSM: bool) {
     // Lattice set up
     let dim = 24;
     let lat = fuzzyImpl::getLeechLattice();
@@ -190,6 +191,7 @@ fn dragRace(doNormal: bool, doGauss: bool, doLeechBucket: bool, doGaussBucket: b
         }
         let mut elapsed = now.elapsed();
         println!("No Bucket (Leech) Elapsed: {:.2?}", elapsed);
+        println!("");
     }
 
     if doGauss {
@@ -203,6 +205,7 @@ fn dragRace(doNormal: bool, doGauss: bool, doLeechBucket: bool, doGaussBucket: b
         }
         let mut elapsed = now.elapsed();
         println!("No Bucket (Gauss) Elapsed: {:.2?}", elapsed);
+        println!("");
     }
 
     if doLeechBucket {
@@ -227,12 +230,13 @@ fn dragRace(doNormal: bool, doGauss: bool, doLeechBucket: bool, doGaussBucket: b
         }
         let mut elapsed = now.elapsed();
         println!("Bucket (Leech) Elapsed: {:.2?}", elapsed);
+        println!("");
     }
 
     if doGaussBucket {
         // Pre Bucketing + Gauss
         let mut now = Instant::now();
-        let mut bct = bucket::GaussBucket::new(4, 2);
+        let mut bct = bucket::GaussBucket::new(3, 2);
         for vec in &all {
             bct.add(vec.clone());
         }
@@ -244,20 +248,67 @@ fn dragRace(doNormal: bool, doGauss: bool, doLeechBucket: bool, doGaussBucket: b
         let mut now = Instant::now();
         for vec in &testCases {
             let cands = bct.getCandidates(vec.clone());
-            let res = gaussFuzzy::gen(vec.clone(), 4);
+            let res = gaussFuzzy::gen(vec.clone(), 3);
             for can in cands {
-                let rec = gaussFuzzy::recov(res.0.clone(), can.clone(), 4);
+                let rec = gaussFuzzy::recov(res.0.clone(), can.clone(), 2);
             }
         }
         let mut elapsed = now.elapsed();
         println!("Bucket (Gauss) Elapsed: {:.2?}", elapsed);
+        println!("");
+    }
+
+    if doGaussPSM {
+        // Pre Bucketing + Gauss
+        let mut now = Instant::now();
+        let mut bct = bucket::GaussBucket::new(3, 2);
+        for vec in &all {
+            bct.add(vec.clone());
+        }
+        let mut elapsed = now.elapsed();
+        println!("Bucket Processing (Gauss) Elapsed: {:.2?}", elapsed);
+        println!("{} elements stored in {} buckets", bct.getBucketSize(), bct.getBucketCount());
+        now = Instant::now();
+        // Bucket
+        let res = gaussPSM::makeHelpersGauss(testCases.clone(), bct.clone());
+        let rec = gaussPSM::attemptMatchingGauss(all, bct, res.1.clone(), res.2.clone());
+        let out = gaussPSM::returnMatches(rec, res.0.clone(), testCases);
+
+        let mut elapsed = now.elapsed();
+        println!("PSM Bucket (Gauss) Elapsed: {:.2?}", elapsed);
+        println!("");
     }
 }
 
+fn gaussPSMTest() {
+    let mut now = Instant::now();
+    let S = vec![
+        vec![3.0, 1.0, 4.0, 1.0, 3.0, 1.0, 4.0, 1.0, 3.0, 1.0, 4.0, 1.0, 3.0, 1.0, 4.0, 1.0, 3.0, 1.0, 4.0, 1.0, 3.0, 1.0, 4.0, 1.0],
+        vec![99.0; 24],
+        vec![22.0; 24],
+    ];
 
+    let Q = vec![
+        vec![2.0, 1.0, 4.0, 1.0, 3.0, 1.0, 4.0, 1.0, 3.0, 1.0, 4.0, 1.0, 3.0, 1.0, 4.0, 1.0, 3.0, 2.0, 4.0, 1.0, 3.0, 1.0, 4.0, 1.0],
+        vec![100.0; 24],
+        vec![33.0; 24],
+    ];
 
+    let mut bct = bucket::GaussBucket::new(3, 2);
+    for vec in &Q {
+        bct.add(vec.clone());
+    }
+
+    let res = gaussPSM::makeHelpersGauss(S.clone(), bct.clone());
+    let rec = gaussPSM::attemptMatchingGauss(Q, bct, res.1.clone(), res.2.clone());
+    let out = gaussPSM::returnMatches(rec, res.0.clone(), S);
+
+    println!("{:?}", out);
+    let mut elapsed = now.elapsed();
+    println!("Gauss PSM Test Elapsed: {:.2?}", elapsed);
+}
 
 fn main() {
-    dragRace(true, true, true, true);
+    dragRace(false, false, false, true, true);
     // timedDemo(100, 2);
 }
