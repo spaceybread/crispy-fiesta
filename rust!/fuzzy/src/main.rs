@@ -5,6 +5,7 @@ use rand::Rng;
 use std::time::Instant;
 mod fuzzyImpl;
 mod bucket;
+mod gaussFuzzy;
 
 // (Demo) Single encode and decode
 fn demo1() {
@@ -82,6 +83,21 @@ fn demo3() {
     }
 }
 
+fn gaussTest() {
+    let dim = 24;
+    let vec = fuzzyImpl::randomVector(dim as usize);
+    // println!("{:?}", vec.clone());
+
+    let res = gaussFuzzy::gen(vec.clone(), 4);
+    println!("{:?}", res.1);
+
+    for i in 0..32 {
+        let mut another = gaussFuzzy::randomVector(dim as usize);
+        let rec = gaussFuzzy::recov(res.0.clone(), another.clone(), 4);
+        println!("{:?}", rec);
+    }
+}
+
 // (Demo) Runs demo2 ite times and times it 
 fn timedDemo(ite: i32, mode: i8) {
     let now = Instant::now();
@@ -89,10 +105,13 @@ fn timedDemo(ite: i32, mode: i8) {
         if mode == 0 {
             // with flattening
             demo2();
-        } else {
+        } else if mode == 1 {
             // without flattening
             demo3();
-        } 
+        } else {
+            // guass lattice with scale 4
+            gaussTest();
+        }
         
     }
     let elapsed = now.elapsed();
@@ -141,7 +160,7 @@ fn bucketDemo() {
 
 }
 
-fn dragRace(doNormal: bool) {
+fn dragRace(doNormal: bool, doGauss: bool, doLeechBucket: bool, doGaussBucket: bool) {
     // Lattice set up
     let dim = 24;
     let lat = fuzzyImpl::getLeechLattice();
@@ -161,7 +180,7 @@ fn dragRace(doNormal: bool) {
     }
 
     if doNormal {
-        // No bucketing
+        // No bucketing + Leech
         let mut now = Instant::now();
         for vec in &testCases {
             let res = fuzzyImpl::gen1D(vec.clone(), lat.clone(), 24);
@@ -170,32 +189,75 @@ fn dragRace(doNormal: bool) {
             }
         }
         let mut elapsed = now.elapsed();
-        println!("No Bucket Elapsed: {:.2?}", elapsed);
+        println!("No Bucket (Leech) Elapsed: {:.2?}", elapsed);
     }
 
-    // Pre Bucketing 
-    let mut now = Instant::now();
-    let mut bct = bucket::Bucket::new(lat.clone(), dim, 2);
-    for vec in &all {
-        bct.add(vec.clone());
-    }
-    let mut elapsed = now.elapsed();
-    println!("Bucket Processing Elapsed: {:.2?}", elapsed);
-    println!("{} elements stored in {} buckets", bct.getBucketSize(), bct.getBucketCount());
-
-    // Bucket
-    let mut now = Instant::now();
-    for vec in &testCases {
-        let cands = bct.getCandidates(vec.clone());
-        let res = fuzzyImpl::gen1D(vec.clone(), lat.clone(), 24);
-        for can in cands {
-            let rec = fuzzyImpl::recov1D(res.0.clone(), can.clone(), lat.clone(), 24);
+    if doGauss {
+        // No bucketing + Gauss
+        let mut now = Instant::now();
+        for vec in &testCases {
+            let res = gaussFuzzy::gen(vec.clone(), 4);
+            for another in &all {
+                let rec = gaussFuzzy::recov(res.0.clone(), another.clone(), 4);
+            }
         }
+        let mut elapsed = now.elapsed();
+        println!("No Bucket (Gauss) Elapsed: {:.2?}", elapsed);
     }
-    let mut elapsed = now.elapsed();
-    println!("Bucket Elapsed: {:.2?}", elapsed);
+
+    if doLeechBucket {
+        // Pre Bucketing + Leech
+        let mut now = Instant::now();
+        let mut bct = bucket::Bucket::new(lat.clone(), dim, 2);
+        for vec in &all {
+            bct.add(vec.clone());
+        }
+        let mut elapsed = now.elapsed();
+        println!("Bucket Processing (Leech) Elapsed: {:.2?}", elapsed);
+        println!("{} elements stored in {} buckets", bct.getBucketSize(), bct.getBucketCount());
+
+        // Bucket
+        let mut now = Instant::now();
+        for vec in &testCases {
+            let cands = bct.getCandidates(vec.clone());
+            let res = fuzzyImpl::gen1D(vec.clone(), lat.clone(), 24);
+            for can in cands {
+                let rec = fuzzyImpl::recov1D(res.0.clone(), can.clone(), lat.clone(), 24);
+            }
+        }
+        let mut elapsed = now.elapsed();
+        println!("Bucket (Leech) Elapsed: {:.2?}", elapsed);
+    }
+
+    if doGaussBucket {
+        // Pre Bucketing + Gauss
+        let mut now = Instant::now();
+        let mut bct = bucket::GaussBucket::new(4, 2);
+        for vec in &all {
+            bct.add(vec.clone());
+        }
+        let mut elapsed = now.elapsed();
+        println!("Bucket Processing (Gauss) Elapsed: {:.2?}", elapsed);
+        println!("{} elements stored in {} buckets", bct.getBucketSize(), bct.getBucketCount());
+
+        // Bucket
+        let mut now = Instant::now();
+        for vec in &testCases {
+            let cands = bct.getCandidates(vec.clone());
+            let res = gaussFuzzy::gen(vec.clone(), 4);
+            for can in cands {
+                let rec = gaussFuzzy::recov(res.0.clone(), can.clone(), 4);
+            }
+        }
+        let mut elapsed = now.elapsed();
+        println!("Bucket (Gauss) Elapsed: {:.2?}", elapsed);
+    }
 }
 
+
+
+
 fn main() {
-    dragRace(false);
+    dragRace(true, true, true, true);
+    // timedDemo(100, 2);
 }
