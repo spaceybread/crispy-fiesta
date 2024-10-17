@@ -347,7 +347,7 @@ fn slackTest () {
     }
     println!("{} elements stored in {} buckets", bct.getBucketSize(), bct.getBucketCount());
 
-    let mut noSlack = 0;
+    let mut noSlack = (0, 0);
     for vec in &queries {
         let cands = bct.getCandidates(vec.clone());
         let res = fuzzyImpl::gen1D(vec.clone(), lat.clone(), 24);
@@ -355,11 +355,14 @@ fn slackTest () {
         for can in cands {
             let rec = fuzzyImpl::recov1D(res.0.clone(), can.clone(), lat.clone(), 24);
             println!("{:?}: {:?}", can[0], rec);
-            noSlack += 1;
+            noSlack.1 += 1;
+            if rec == res.1 {
+                noSlack.0 += 1
+            }
         }
     }
     println!("");
-    let mut slack = 0;
+    let mut slack = (0, 0);
     for vec in &queries {
         let cands = bct.getCandidatesWithSlack(vec.clone());
         let res = fuzzyImpl::gen1D(vec.clone(), lat.clone(), 24);
@@ -367,15 +370,18 @@ fn slackTest () {
         for can in cands {
             let rec = fuzzyImpl::recov1D(res.0.clone(), can.clone(), lat.clone(), 24);
             println!("{:?}: {:?}", can[0], rec);
-            slack += 1;
+            slack.1 += 1;
+            if rec == res.1 {
+                slack.0 += 1
+            }
         }
     }
 
-    println!("{:?} returned without slack and {:?} returned with slack", noSlack, slack);
+    println!("{:?}/{:?} returned without slack and {:?}/{:?} returned with slack", noSlack.0, noSlack.1, slack.0, slack.1);
 }
 
 fn main() {
-    slackTest();
-    // dragRace(false, false, false, true, false, true);
+    // slackTest();
+    dragRace(false, false, false, true, false, true);
     // timedDemo(100, 2);
 }
