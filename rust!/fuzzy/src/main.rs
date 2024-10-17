@@ -320,7 +320,7 @@ fn gaussPSMTest() {
         vec![33.0; 24],
     ];
 
-    let mut bct = bucket::GaussBucket::new(3, 2);
+    let mut bct = bucket::GaussBucket::new(4, 2);
     for vec in &Q {
         bct.add(vec.clone());
     }
@@ -336,18 +336,8 @@ fn gaussPSMTest() {
 
 fn slackTest () {
     // Test data
-    let quer = vec![vec![2.0; 24]];
-    let mut db = vec![vec![1.0; 24], vec![1.5; 24]];
-
-    let mut weird = vec![];
-    for i in 0..6 {
-        weird.push(1.5);
-        weird.push(1.0);
-        weird.push(1.0);
-        weird.push(1.0);
-    }
-
-    db.push(weird);
+    let queries = vec![vec![2.00001; 24]];
+    let mut db = vec![vec![1.99999; 24], vec![2.00001; 24], vec![2.02; 24]];
 
     let lat = fuzzyImpl::getLeechLattice();
     let mut bct = bucket::GaussBucket::new(3, 2);
@@ -358,25 +348,25 @@ fn slackTest () {
     println!("{} elements stored in {} buckets", bct.getBucketSize(), bct.getBucketCount());
 
     let mut noSlack = 0;
-    for vec in &quer {
+    for vec in &queries {
         let cands = bct.getCandidates(vec.clone());
         let res = fuzzyImpl::gen1D(vec.clone(), lat.clone(), 24);
-        println!("{:?}", res.1);
+        println!("Query: {}: {:?}", vec[0], res.1);
         for can in cands {
             let rec = fuzzyImpl::recov1D(res.0.clone(), can.clone(), lat.clone(), 24);
-            println!("{:?}", rec);
+            println!("{:?}: {:?}", can[0], rec);
             noSlack += 1;
         }
     }
     println!("");
     let mut slack = 0;
-    for vec in &quer {
+    for vec in &queries {
         let cands = bct.getCandidatesWithSlack(vec.clone());
         let res = fuzzyImpl::gen1D(vec.clone(), lat.clone(), 24);
-        println!("{:?}", res.1);
+        println!("Query: {}: {:?}", vec[0], res.1);
         for can in cands {
             let rec = fuzzyImpl::recov1D(res.0.clone(), can.clone(), lat.clone(), 24);
-            println!("{:?}", rec);
+            println!("{:?}: {:?}", can[0], rec);
             slack += 1;
         }
     }
