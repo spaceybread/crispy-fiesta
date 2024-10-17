@@ -161,7 +161,7 @@ fn bucketDemo() {
 
 }
 
-fn dragRace(doNormal: bool, doGauss: bool, doLeechBucket: bool, doGaussBucket: bool, doGaussPSM: bool) {
+fn dragRace(doNormal: bool, doGauss: bool, doLeechBucket: bool, doGaussBucket: bool, doGaussPSM: bool, doGaussBucketSlack: bool) {
     // Lattice set up
     let dim = 24;
     let lat = fuzzyImpl::getLeechLattice();
@@ -271,11 +271,37 @@ fn dragRace(doNormal: bool, doGauss: bool, doLeechBucket: bool, doGaussBucket: b
         now = Instant::now();
         // Bucket
         let res = gaussPSM::makeHelpersGauss(testCases.clone(), bct.clone());
-        let rec = gaussPSM::attemptMatchingGauss(all, bct, res.1.clone(), res.2.clone());
-        let out = gaussPSM::returnMatches(rec, res.0.clone(), testCases);
+        let rec = gaussPSM::attemptMatchingGauss(all.clone(), bct, res.1.clone(), res.2.clone());
+        let out = gaussPSM::returnMatches(rec, res.0.clone(), testCases.clone());
 
         let mut elapsed = now.elapsed();
         println!("PSM Bucket (Gauss) Elapsed: {:.2?}", elapsed);
+        println!("");
+    }
+
+    if doGaussBucketSlack {
+        // Pre Bucketing + Gauss
+        let mut now = Instant::now();
+        let mut bct = bucket::GaussBucket::new(3, 2);
+        
+        for vec in &all {
+            bct.addWithSlack(vec.clone());
+        }
+        let mut elapsed = now.elapsed();
+        println!("Bucket Processing (Gauss) Elapsed: {:.2?}", elapsed);
+        println!("{} elements stored in {} buckets", bct.getBucketSize(), bct.getBucketCount());
+        
+        // Bucket
+        let mut now = Instant::now();
+        for vec in &testCases {
+            let cands = bct.getCandidatesWithSlack(vec.clone());
+            let res = gaussFuzzy::gen(vec.clone(), 3);
+            for can in cands {
+                let rec = gaussFuzzy::recov(res.0.clone(), can.clone(), 2);
+            }
+        }
+        let mut elapsed = now.elapsed();
+        println!("Bucket With Slack (Gauss) Elapsed: {:.2?}", elapsed);
         println!("");
     }
 }
@@ -309,6 +335,6 @@ fn gaussPSMTest() {
 }
 
 fn main() {
-    dragRace(false, false, false, true, true);
+    dragRace(false, false, false, true, false, true);
     // timedDemo(100, 2);
 }

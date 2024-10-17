@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::collections::HashSet;
 use sha2::{Sha256, Digest};
 use crate::fuzzyImpl;
 use crate::gaussFuzzy;
@@ -133,6 +134,37 @@ impl GaussBucket {
         return gaussFuzzy::hashVector(idVec);
     }
 
+    pub fn getBucketIDWithSlack(&mut self, vec: Vec<f64>) -> Vec<String> {
+        if self.param as usize > vec.len() {
+            panic!("Paramater fail: param > length of vector");
+        }
+        let closest = gaussFuzzy::closest(vec.clone(), self.scale);
+        let mut idVec = vec![0.0; self.param as usize];
+        
+        for i in 0..self.param {
+            idVec[i as usize] = closest[((3 * i) % closest.len() as i32) as usize];
+        }
+        
+        let mut out = vec![];
+
+        let vars = self.createVariants(idVec.clone());
+
+        for v in vars {
+            out.push(gaussFuzzy::hashVector(v));
+        }
+
+
+        let closest = gaussFuzzy::closest(vec, self.scale);
+        let mut idVec = vec![0.0; self.param as usize];
+    
+        for i in 0..self.param {
+            idVec[i as usize] = closest[((3 * i) % closest.len() as i32) as usize];
+        }
+        out.push(gaussFuzzy::hashVector(idVec));
+
+        return out;
+    }
+
     pub fn add(&mut self, vec: Vec<f64>) -> bool {
         let id = self.getBucketID(vec.clone());
 
@@ -147,6 +179,20 @@ impl GaussBucket {
         }
         
         return false;
+    }
+
+    pub fn addWithSlack(&mut self, vec: Vec<f64>) {
+        let ids = self.getBucketIDWithSlack(vec.clone());
+        
+        for id in ids {
+            if self.bucket.contains_key(&id) {
+                if let Some(x) = self.bucket.get_mut(&id) {
+                    x.push(vec.clone());
+                } 
+            } else {
+                self.bucket.insert(id, vec![vec.clone()]);
+            }
+        }
     }
 
     pub fn displayBucket(&mut self) {
@@ -185,6 +231,25 @@ impl GaussBucket {
         return vec![];
     }
 
+    pub fn getCandidatesWithSlack(&mut self, vec: Vec<f64>) -> Vec<Vec<f64>> {
+        let ids = self.getBucketIDWithSlack(vec.clone());
+        
+        let mut out = vec![];
+
+        for id in ids {
+            if self.bucket.contains_key(&id) {
+                if let Some(x) = self.bucket.get_mut(&id) {
+                    for v in x {
+                        if !out.contains(v) {
+                            out.push(v.clone());
+                        }    
+                    }
+                } 
+            }
+        }
+        return out;
+    }
+
     pub fn getCandidatesFromID(&mut self, id: String) -> Vec<Vec<f64>> {
         if self.bucket.contains_key(&id) {
             if let Some(x) = self.bucket.get_mut(&id) {
@@ -193,6 +258,27 @@ impl GaussBucket {
         }
 
         return vec![];
+    }
+
+    pub fn createVariants(&mut self, vec: Vec<f64>) -> Vec<Vec<f64>> {
+        fn helper(vec: &Vec<f64>, index: usize, current: &mut Vec<f64>, result: &mut Vec<Vec<f64>>, scale: f64) {
+            if index == vec.len() {
+                result.push(current.clone());
+            } else {
+                current.push(vec[index] + 0.5 * scale);
+                helper(vec, index + 1, current, result, scale);
+                current.pop();
+                
+                current.push(vec[index] - 0.5 * scale);
+                helper(vec, index + 1, current, result, scale);
+                current.pop();
+            }
+        }
+    
+        let mut result = Vec::new();
+        let mut current = Vec::new();
+        helper(&vec, 0, &mut current, &mut result, self.scale as f64);
+        return result;
     }
 
 }
