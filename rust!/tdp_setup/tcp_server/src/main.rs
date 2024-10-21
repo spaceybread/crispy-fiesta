@@ -3,6 +3,12 @@ use std::net::{TcpListener, TcpStream};
 use std::thread;
 extern crate fuzzy;
 
+fn parse_vector(input: &str) -> Vec<f64> {
+    input
+        .split(',')
+        .filter_map(|s| s.trim().parse::<f64>().ok())
+        .collect()
+}
 
 fn handle_client(mut stream: TcpStream) {
     let mut buffer = [0; 512]; 
@@ -19,7 +25,9 @@ fn handle_client(mut stream: TcpStream) {
                     return;
                 }
 
-                println!("Received: {}", rec);
+                let recvec = parse_vector(&rec);
+
+                println!("Received: {:?}", recvec);
                 let response = b"Message received\n";
                 if let Err(e) = stream.write_all(response) {
                     eprintln!("Failed to send response: {}", e);
