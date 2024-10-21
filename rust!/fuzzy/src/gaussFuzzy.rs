@@ -4,18 +4,10 @@ use std::env;
 use rand::Rng;
 use std::time::Instant;
 
-pub fn closest(mut vec: Vec<f64>, scale: i32) -> Vec<f64>{
-    for i in 0..vec.len() {
-        let mut val = vec[i];
-        let r = val.rem_euclid(scale as f64); 
-
-        if 2.0 * r >= scale as f64 {
-            vec[i] += scale as f64;    
-        }
-
-        vec[i] += -1.0 * r;
-    }
-    return vec;
+pub fn closest(mut vec: Vec<f64>, k: i32) -> Vec<f64>{
+    vec.into_iter()
+        .map(|x| (x / k as f64).round() * k as f64)
+        .collect()
      
 }
 

@@ -265,11 +265,11 @@ impl GaussBucket {
             if index == vec.len() {
                 result.push(current.clone());
             } else {
-                current.push(vec[index] + 0.5 * scale);
+                current.push(vec[index] + scale);
                 helper(vec, index + 1, current, result, scale);
                 current.pop();
                 
-                current.push(vec[index] - 0.5 * scale);
+                current.push(vec[index] - scale);
                 helper(vec, index + 1, current, result, scale);
                 current.pop();
             }
