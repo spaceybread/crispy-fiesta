@@ -381,7 +381,7 @@ fn slackTest () {
 }
 
 fn main() {
-    // slackTest();
-    dragRace(false, false, false, true, false, true);
+    slackTest();
+    // dragRace(false, false, false, true, false, true);
     // timedDemo(100, 2);
 }

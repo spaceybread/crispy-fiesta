@@ -1,6 +1,8 @@
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
+extern crate fuzzy;
+
 
 fn handle_client(mut stream: TcpStream) {
     let mut buffer = [0; 512]; 
