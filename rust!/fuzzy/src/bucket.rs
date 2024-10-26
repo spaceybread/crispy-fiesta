@@ -103,8 +103,8 @@ impl Bucket {
 }
 
 pub struct GaussBucket {
-    bucket: HashMap<String, Vec<Vec<f64>>>,
-    param: i32,
+    pub bucket: HashMap<String, Vec<Vec<f64>>>,
+    pub param: i32,
     pub scale : i32,
 }
 
@@ -259,6 +259,28 @@ impl GaussBucket {
 
         return vec![];
     }
+
+    pub fn createVariantsThin(&mut self, vec: Vec<f64>) -> Vec<Vec<f64>> {
+        fn helper(vec: &Vec<f64>, index: usize, current: &mut Vec<f64>, result: &mut Vec<Vec<f64>>, scale: f64) {
+            if index == vec.len() {
+                result.push(current.clone());
+            } else {
+                current.push(vec[index] + scale);
+                helper(vec, index + 1, current, result, scale);
+                current.pop();
+                
+                current.push(vec[index] - scale);
+                helper(vec, index + 1, current, result, scale);
+                current.pop();
+            }
+        }
+    
+        let mut result = Vec::new();
+        let mut current = Vec::new();
+        helper(&vec, 0, &mut current, &mut result, self.scale as f64);
+        return result;
+    }
+
 
     pub fn createVariants(&mut self, vec: Vec<f64>) -> Vec<Vec<f64>> {
         fn helper(vec: &Vec<f64>, index: usize, current: &mut Vec<f64>, result: &mut Vec<Vec<f64>>, scale: f64) {
