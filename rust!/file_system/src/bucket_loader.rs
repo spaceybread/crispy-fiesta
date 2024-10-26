@@ -42,7 +42,13 @@ fn parse_vector(input: &str) -> Vec<f64> {
 
 fn read_file_to_vec(filename: &str) -> Vec<Vec<f64>>{
     let mut out: Vec<Vec<f64>> = vec![];
-    let binding = read_to_string(filename).unwrap();
+    let binding = match read_to_string(filename) {
+        Ok(content) => content,
+        Err(e) => {
+            return out;
+        }
+    };
+
     let file = binding.lines();
 
     for line in file {
@@ -51,4 +57,26 @@ fn read_file_to_vec(filename: &str) -> Vec<Vec<f64>>{
     }
 
     return out;
+}
+
+pub fn handle_queries(mut bucket: GaussBucket, vec: Vec<f64>) -> Vec<Vec<f64>> {
+    let mut pout: Vec<Vec<f64>> = vec![];
+
+    let ids = bucket.getBucketIDWithSlack(vec);
+
+    for id in ids {
+        let filename = format!("db/{}.txt", id);
+        let mut x = read_file_to_vec(&filename);
+        pout.append(&mut x);
+    }
+
+    let mut out: Vec<Vec<f64>> = vec![];
+    
+    for v in pout {
+        if !out.contains(&v) {
+            out.push(v.clone());
+        }    
+    }
+
+    return out; 
 }
