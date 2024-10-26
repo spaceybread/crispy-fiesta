@@ -1,0 +1,2 @@
+reset:
+	rm db/*.txt
