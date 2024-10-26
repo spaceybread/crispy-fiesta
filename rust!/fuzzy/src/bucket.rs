@@ -272,6 +272,10 @@ impl GaussBucket {
                 current.push(vec[index] - scale);
                 helper(vec, index + 1, current, result, scale);
                 current.pop();
+
+                current.push(vec[index]);
+                helper(vec, index + 1, current, result, scale);
+                current.pop();
             }
         }
     
