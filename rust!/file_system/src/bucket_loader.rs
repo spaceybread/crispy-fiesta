@@ -9,7 +9,7 @@ use std::fs::read_to_string;
 
 fn make_specifier_file(scale: i32, param: i32) {
     let filename = format!("db/spec.txt");
-    let data = scale.to_string() + " " + &param.to_string();
+    let data = scale.to_string() + "\n" + &param.to_string();
     fs::write(filename, data).expect("Could not make specifier file!");
 }
 
@@ -57,6 +57,24 @@ fn read_file_to_vec(filename: &str) -> Vec<Vec<f64>>{
     }
 
     return out;
+}
+
+pub fn get_bucket_from_data() -> GaussBucket {
+    let binding = match read_to_string("db/spec.txt") {
+        Ok(content) => content,
+        Err(e) => {
+            panic!("Spec.txt could not be read!");
+        }
+    };
+
+    let file = binding.lines();
+    
+    let mut out: Vec<i32> = vec![];
+    for line in file {
+        out.push(line.parse::<i32>().unwrap());
+    }
+
+    return GaussBucket::new(out[0], out[1]);
 }
 
 pub fn handle_queries(mut bucket: GaussBucket, vec: Vec<f64>) -> Vec<Vec<f64>> {
