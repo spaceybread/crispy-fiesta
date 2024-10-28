@@ -2,6 +2,38 @@ use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
 extern crate fuzzy;
+extern crate file_system;
+use file_system::bucket_loader;
+use fuzzy::fuzzyImpl;
+use fuzzy::gaussFuzzy;
+use fuzzy::bucket::GaussBucket;
+
+fn make_db() {
+    let scale = 3;
+    let p = 2;
+    let dim = 24;
+    // Creating the test data 
+    let mut all = vec![vec![0.0]; 10000];
+    let mut testCases = vec![vec![0.0]; 5];
+    let mut tc = 0;
+
+    for i in 0..10000 {
+        all[i] = fuzzyImpl::randomVector(dim as usize);
+
+        if i % 2000 == 0 {
+            testCases[tc] = all[i].clone();
+            tc += 1
+        }
+    }
+    let mut bct = GaussBucket::new(scale, p);
+            
+    for vec in &all {
+        bct.add(vec.clone());
+    }
+    bucket_loader::make_files_from_bucket(bct.clone());
+}
+
+
 
 fn parse_vector(input: &str) -> Vec<f64> {
     input
@@ -24,10 +56,21 @@ fn handle_client(mut stream: TcpStream) {
                     }
                     return;
                 }
-
+                let bct = bucket_loader::get_bucket_from_data();
                 let recvec = parse_vector(&rec);
+                let cands = bucket_loader::handle_queries(bct.clone(), recvec.clone());
+                let res = gaussFuzzy::gen(recvec.clone(), bct.scale);
+                for can in cands {
+                    let rec = gaussFuzzy::recov(res.0.clone(), can.clone(), bct.scale);
+                    if rec == res.1 {
+                        let mes = format!("{:?}\n", can);
+                        if let Err(e) = stream.write_all(mes.as_bytes()) {
+                            eprintln!("Failed to send response: {}", e);
+                        }
+                        println!("{:?}", can);
+                    }
+                }
 
-                println!("Received: {:?}", recvec);
                 let response = b"Message received\n";
                 if let Err(e) = stream.write_all(response) {
                     eprintln!("Failed to send response: {}", e);
