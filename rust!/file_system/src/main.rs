@@ -140,8 +140,7 @@ fn loaded_test(scale: i32, p: i32) {
     println!("{:.2?} {:.2?}", elapsed, elapsed1);
 }
 
-
-fn main() {
+fn timed_runs() {
     let scale = 3;
     let p = 2;
     
@@ -154,4 +153,50 @@ fn main() {
     for i in 0..5 {
         loaded_test(scale, 1);
     }
+}
+
+
+fn actual_data() {
+    let scale = 3;
+    let p = 2;
+
+    let mut all = bucket_loader::read_file_to_vec("/Users/home/Desktop/papers to read/fuzzyPasswords/code/myrep/crispy-fiesta/rust!/test_data/embeddings.txt");
+    println!("Loading done!");
+    let mut test_cases = vec![all[15].clone(), all[75].clone(), all[314].clone(), all[1618].clone(), all[9999].clone()];
+
+    let mut now = Instant::now();
+    let mut bct = bucket::GaussBucket::new(scale, p);
+    
+    for vec in &all {
+        bct.add(vec.clone());
+    }
+    let mut elapsed = now.elapsed();
+    println!("{:.2?}", elapsed);
+
+    let mut elapsed = now.elapsed();
+    // Bucket
+    let mut now = Instant::now();
+    for vec in &test_cases {
+        let cands = bct.getCandidatesWithSlack(vec.clone());
+        let res = gaussFuzzy::gen(vec.clone(), scale);
+        let mut i = 0;
+        for can in cands {
+            let rec = gaussFuzzy::recov(res.0.clone(), can.clone(), scale);
+            if rec == res.1 {
+                i += 1;
+                // println!("works!");
+            }
+        }
+        println!("{} <- {:?}", i, res.1);
+    }
+    let mut elapsed1 = now.elapsed();
+    // println!("Bucket With Slack (Gauss) Elapsed: {:.2?}", elapsed1);
+    println!("{:.2?} {:.2?}", elapsed, elapsed1);
+
+    
+
+}
+
+fn main() {
+    actual_data();
 }

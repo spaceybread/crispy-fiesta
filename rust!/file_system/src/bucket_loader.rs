@@ -1,4 +1,5 @@
 extern crate fuzzy;
+use npyz;
 use fuzzy::bucket::GaussBucket;
 use std::collections::HashMap;
 use std::fs::{self, File};
