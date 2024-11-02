@@ -21,6 +21,12 @@ fn make_bucket_files(map: HashMap<String, Vec<Vec<f64>>>) {
     }
 }
 
+pub fn make_data_file(vecs: Vec<Vec<f64>>, name: String) {
+    let filename = format!("db/{}.txt", name);
+    let ln = get_vector_in_format(&vecs);
+    fs::write(filename, ln).expect("Unable to make full db file!");
+}
+
 fn get_vector_in_format(bucketData: &Vec<Vec<f64>>) -> String {
     bucketData.iter()
         .map(|inner_vec| inner_vec.iter().map(|f| f.to_string()).collect::<Vec<_>>().join(", "))
@@ -40,7 +46,7 @@ fn parse_vector(input: &str) -> Vec<f64> {
         .collect()
 }
 
-fn read_file_to_vec(filename: &str) -> Vec<Vec<f64>>{
+pub fn read_file_to_vec(filename: &str) -> Vec<Vec<f64>>{
     let mut out: Vec<Vec<f64>> = vec![];
     let binding = match read_to_string(filename) {
         Ok(content) => content,

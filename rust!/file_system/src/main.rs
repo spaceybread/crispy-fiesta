@@ -5,6 +5,7 @@ use fuzzy::bucket::GaussBucket;
 use fuzzy::fuzzyImpl;
 use fuzzy::gaussFuzzy;
 use std::time::Instant;
+use fuzzy::bucket;
 
 
 fn basic_test() {
@@ -41,16 +42,18 @@ fn basic_test() {
 }
 
 fn brute_force() {
+    let scale = 3;
+    let p = 5;
     let dim = 24;
     // Creating the test data 
-    let mut all = vec![vec![0.0]; 100000];
+    let mut all = vec![vec![0.0]; 10000];
     let mut testCases = vec![vec![0.0]; 5];
     let mut tc = 0;
 
-    for i in 0..100000 {
+    for i in 0..10000 {
         all[i] = fuzzyImpl::randomVector(dim as usize);
 
-        if i % 20000 == 0 {
+        if i % 2000 == 0 {
             testCases[tc] = all[i].clone();
             tc += 1
         }
@@ -58,36 +61,97 @@ fn brute_force() {
 
     // Pre Bucketing + Gauss
     let mut now = Instant::now();
-    let mut bct = GaussBucket::new(3, 2);
+    let mut bct = GaussBucket::new(scale, p);
             
-    for vec in &all {
-        bct.add(vec.clone());
-    }
-    let mut elapsed = now.elapsed();
-    println!("Bucket Processing (Gauss) Elapsed: {:.2?}", elapsed);
-    println!("{} elements stored in {} buckets", bct.getBucketSize(), bct.getBucketCount());
+    // for vec in &all {
+    //    bct.add(vec.clone());
+    // }
     
     bucket_loader::make_files_from_bucket(bct.clone());
+    let mut elapsed = now.elapsed();
+    //println!("Bucket Processing (Gauss) Elapsed: {:.2?}", elapsed);
+    // println!("{} elements stored in {} buckets", bct.getBucketSize(), bct.getBucketCount());
+
     bct = bucket_loader::get_bucket_from_data();
 
     // Bucket
     let mut now = Instant::now();
     for vec in &testCases {
         let cands = bucket_loader::handle_queries(bct.clone(), vec.clone());
-        let res = gaussFuzzy::gen(vec.clone(), 3);
+        let res = gaussFuzzy::gen(vec.clone(), scale);
         for can in cands {
-            let rec = gaussFuzzy::recov(res.0.clone(), can.clone(), 3);
+            let rec = gaussFuzzy::recov(res.0.clone(), can.clone(), scale);
             if rec == res.1 {
                 println!("works!");
             }
         }
     }
-    let mut elapsed = now.elapsed();
-    println!("Bucket With Slack (Gauss) Elapsed: {:.2?}", elapsed);
-    println!("");
+    let mut elapsed1 = now.elapsed();
+    //println!("Bucket With Slack (Gauss) Elapsed: {:.2?}", elapsed1);
+    println!("{:.2?} ({:.2?})", elapsed1, elapsed);
 }
 
+fn make_db(scale: i32, p: i32) {
+    let dim = 24;
+    // Creating the test data 
+    let mut all = vec![vec![0.0]; 10000000];
+    let mut testCases = vec![vec![0.0]; 5];
+    let mut tc = 0;
+
+    for i in 0..10000000 {
+        all[i] = fuzzyImpl::randomVector(dim as usize);
+
+        if i % 2000000 == 0 {
+            testCases[tc] = all[i].clone();
+            tc += 1
+        }
+    }
+
+    bucket_loader::make_data_file(all, "db".to_string());
+    bucket_loader::make_data_file(testCases, "test".to_string());
+}
+
+fn loaded_test(scale: i32, p: i32) {
+    let mut all = bucket_loader::read_file_to_vec("db/db.txt");
+    let mut testCases = bucket_loader::read_file_to_vec("db/test.txt");
+
+    // Pre Bucketing + Gauss
+    let mut now = Instant::now();
+    let mut bct = bucket::GaussBucket::new(scale, p);
+    
+    for vec in &all {
+        bct.add(vec.clone());
+    }
+    let mut elapsed = now.elapsed();
+    // Bucket
+    let mut now = Instant::now();
+    for vec in &testCases {
+        let cands = bct.getCandidatesWithSlack(vec.clone());
+        let res = gaussFuzzy::gen(vec.clone(), scale);
+        for can in cands {
+            let rec = gaussFuzzy::recov(res.0.clone(), can.clone(), scale);
+            if rec == res.1 {
+                // println!("works!");
+            }
+        }
+    }
+    let mut elapsed1 = now.elapsed();
+    // println!("Bucket With Slack (Gauss) Elapsed: {:.2?}", elapsed1);
+    println!("{:.2?} {:.2?}", elapsed, elapsed1);
+}
+
+
 fn main() {
-    // basic_test();
-    brute_force();
+    let scale = 3;
+    let p = 2;
+    
+    make_db(scale, p);
+    println!{"p = 2"};
+    for i in 0..5 {
+        loaded_test(scale, p);
+    }
+    println!{"p = 1"};
+    for i in 0..5 {
+        loaded_test(scale, 1);
+    }
 }

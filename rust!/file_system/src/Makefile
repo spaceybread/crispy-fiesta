@@ -1,2 +1,4 @@
-reset:
-	rm db/*.txt
+run:
+	rm -r db
+	mkdir db
+	cargo run
