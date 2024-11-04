@@ -157,10 +157,10 @@ fn timed_runs() {
 
 
 fn actual_data() {
-    let scale = 3;
+    let scale = 1;
     let p = 2;
 
-    let mut all = bucket_loader::read_file_to_vec("/Users/home/Desktop/papers to read/fuzzyPasswords/code/myrep/crispy-fiesta/rust!/test_data/embeddings.txt");
+    let mut all = bucket_loader::read_file_to_vec("../../test_data/embeddings.txt");
     println!("Loading done!");
     let mut test_cases = vec![all[15].clone(), all[75].clone(), all[314].clone(), all[1618].clone(), all[9999].clone()];
 
