@@ -43,7 +43,7 @@ def make_data(n):
 
 vector_a, vector_b, ground_truth = make_data(N // 2)
 
-scores = [np.linalg.norm(-vector_a[i] + vector_b[i]) for i in range(N)]
+scores = [np.dot(vector_a[i], vector_b[i]) for i in range(N)]
 
 fpr, tpr, thresholds = roc_curve(ground_truth, scores)
 roc_auc = auc(fpr, tpr)
