@@ -1,6 +1,7 @@
 mod lattice;
 mod fuzzy_extractor;
 mod bucket;
+mod file_loader;
 
 static LATTICE_NAME: &str = "GAUSS_INF";
 
@@ -14,6 +15,6 @@ fn main() {
     let v2 = cow.closest(v1.clone());
     println!("{:?}", v2);
     println!("{:?}", v1 == v2);
-    let mut fuzzy = fuzzy_extractor::Fuzzy::new(cow.clone());
-    let mut bucket = bucket::Bucket::new(2, cow.clone());
+    let _fuzzy = fuzzy_extractor::Fuzzy::new(cow.clone());
+    let _bucket = bucket::Bucket::new(2, cow.clone());
 }
