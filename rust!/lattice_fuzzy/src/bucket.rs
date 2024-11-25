@@ -63,13 +63,13 @@ impl Bucket {
         }
 
 
-        let closest = self.lattice.closest(vec);
-        let mut id_vec = vec![0.0; self.param as usize];
+        //let closest = self.lattice.closest(vec);
+        //let mut id_vec = vec![0.0; self.param as usize];
     
-        for i in 0..self.param {
-            id_vec[i as usize] = closest[((self.mult * i + self.add) % closest.len() as i32) as usize];
-        }
-        out.push(self.fuzzy_extractor.hash_vector(id_vec));
+        //for i in 0..self.param {
+        //    id_vec[i as usize] = closest[((self.mult * i + self.add) % closest.len() as i32) as usize];
+        //}
+        //out.push(self.fuzzy_extractor.hash_vector(id_vec));
 
         return out;
     }
@@ -144,15 +144,13 @@ impl Bucket {
         let ids = self.get_bucket_id_with_slack(vec.clone());
         
         let mut out = vec![];
-
+        println!("{}", ids.len());
         for id in ids {
             if self.bucket.contains_key(&id) {
                 if let Some(x) = self.bucket.get_mut(&id) {
-                    for v in x {
-                        if !out.contains(v) {
-                            out.push(v.clone());
-                        }    
-                    }
+                    println!("vecs: {}", x.len());
+                    out.append(&mut x.clone());   
+                
                 } 
             }
         }
