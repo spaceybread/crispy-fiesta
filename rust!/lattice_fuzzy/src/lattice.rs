@@ -4,21 +4,19 @@ pub struct Lattice {
     name: String,
     matrix: Vec<f64>,
     pub dim:i32,
-    pub scale: f64,
-    pub threshold: f64
+    pub scale: f64
 }
 
 impl Lattice {
     const LEACH: &'static str = "LEECH_24";
     const GAUSS: &'static str = "GAUSS_INF";
 
-    pub fn new(name: String, scale: f64, threshold: f64) -> Self {
+    pub fn new(name: String, scale: f64) -> Self {
         Lattice {
             name: name,
             matrix: vec![0.0],
             dim: 0,
             scale: scale,
-            threshold: threshold
         }
     }
 
@@ -37,35 +35,14 @@ impl Lattice {
         }
     }
     
-    pub fn round(&self, val: f64) -> f64 {
-        let val_thresh = (val % self.scale) / self.scale;
-        if val_thresh >= self.threshold {
-            return val - (val % self.scale) + self.scale;
-        }
-        return val - (val % self.scale);
+    pub fn round(&self, vec: Vec<f64>) -> Vec<f64> {
+        vec.into_iter()
+            .map(|x| (x / self.scale).round() * self.scale)
+            .collect()
     }
 
-    pub fn round_vector_for_leech(&self, vec: Vec<f64>) -> Vec<f64> {
-        let mut out = vec![0.0; 24];
-
-        for i in 0..vec.len() {
-            let val = vec[i];
-            let val_thresh = val % 1.0;
-            if val_thresh >= self.threshold {
-                out[i] = val.ceil();
-            } else {
-                out[i] = val.floor();
-            }
-        }
-
-        return out;
-    }
-
-    fn closest_gauss(&self, mut vec: Vec<f64>) -> Vec<f64> {
-        for i in 0..vec.len() {
-            vec[i] = self.round(vec[i]);
-        }
-        return vec;
+    fn closest_gauss(&self, vec: Vec<f64>) -> Vec<f64> {
+        return self.round(vec);
     }
 
     fn closest_leech(&self, vec: Vec<f64>) -> Vec<f64> {
@@ -77,7 +54,7 @@ impl Lattice {
         let inv_b = b.clone().try_inverse().unwrap();
         let coeff = inv_b * p;
         let coeff_vec = coeff.data.as_vec().clone();
-        let rounded = DVector::from_vec(self.round_vector_for_leech(coeff_vec));
+        let rounded = DVector::from_vec(self.round(coeff_vec));
         let almost_out = b * rounded;
 
         return almost_out.data.as_vec().clone();
@@ -113,7 +90,6 @@ impl Clone for Lattice {
             matrix: self.matrix.clone(),
             dim: self.dim,
             scale: self.scale,
-            threshold: self.threshold
         }
     }
 }

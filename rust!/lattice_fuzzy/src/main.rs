@@ -8,7 +8,7 @@ static LATTICE_NAME: &str = "GAUSS_INF";
 fn rehersal() {
     let test_data = file_loader::get_vectors_from_file("../../test_data/embeddings.txt");
     println!("Size: {}", test_data.len());
-    let mut lat = lattice::Lattice::new(LATTICE_NAME.to_string(), 0.01, 0.9);
+    let mut lat = lattice::Lattice::new(LATTICE_NAME.to_string(), 2.0 * 0.1);
     lat.init();
     let mut bucket = bucket::Bucket::new(2, lat.clone());
     let fuzzy = fuzzy_extractor::Fuzzy::new(lat);
