@@ -1,4 +1,7 @@
 use std::fs::read_to_string;
+use std::io::Write;
+use std::fs::File;
+use std::io;
 
 fn parse_vector(input: &str) -> Vec<f64> {
     input
@@ -23,4 +26,13 @@ pub fn get_vectors_from_file(filename: &str) -> Vec<Vec<f64>>{
     }
 
     return out;
+}
+
+pub fn make_file_from_i32_vec(data: Vec<i32>, path: &str) -> io::Result<()>  {
+    let mut file = File::create(path)?;
+    for n in data {
+        writeln!(file, "{}", n)?;
+    }
+
+    Ok(())
 }
