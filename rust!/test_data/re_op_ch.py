@@ -20,6 +20,16 @@ def _sample(a, n, t):
         lambda x: np.random.choice(x, t, replace=False)
     ))
 
+def read_vectors_from_file(file_path):
+    with open(file_path, 'r') as file:
+        vectors = [list(map(float, line.strip().split(','))) for line in file if line.strip()]
+    return vectors
+
+def read_numbers_into_array(file_path):
+    with open(file_path, 'r') as file:
+        numbers = [float(line.strip()) for line in file if line.strip()]
+    return numbers
+
 def _euclidian_dist(a, b):
     return ((a-b)**2).sum(axis=1)
 
@@ -28,23 +38,48 @@ def _dot_dist(a, b):
     bsum = (b*b).sum(axis=1)**0.5
     return (a*b).sum(axis=1)/(asum*bsum)
 
+def _read_data():
+    v1 = read_vectors_from_file("matches/v1.txt")
+    v2 = read_vectors_from_file("matches/v2.txt")
+    scores3 = read_numbers_into_array("matches/pairs.txt")
+    
+    return v1, v2, scores3
+
 
 def compute_roc(npz_file, file_name):
     d, ids = _load_data(npz_file, file_name)
     dim = d.shape[1]-2
-    n = 100
+    n = 2500
     intra_pairs = _sample(ids, n, 2).reshape((n, 2))
     inter_pairs = _sample(ids, 2*n, 1).reshape((n, 2))
 
     t = np.vstack((intra_pairs, inter_pairs))
     v1 = d.iloc[t[:, 0], np.arange(dim)].values
     v2 = d.iloc[t[:, 1], np.arange(dim)].values
-    y = [0] * n + [1] * n
+    
     scores1 = _euclidian_dist(v1, v2)
     scores2 = _dot_dist(v1, v2)
-    tpr, fpr, thresholds = metrics.roc_curve(y, scores2)
+    #$with open("matches/v1.txt", "w") as file:
+    #    for arr in v1:
+    #        line = ",".join(map(str, arr))
+    #        file.write(line + "\n")
+    #
+    #with open("matches/v2.txt", "w") as file:
+    #    for arr in v2:
+    #        line = ",".join(map(str, arr))
+    #        file.write(line + "\n")
+    
+    #v1, v2, scores3 = _read_data()
+    
+    y = [0] * n + [1] * n
+    #scores1 = _euclidian_dist(v1, v2)
+    #scores2 = _dot_dist(v1, v2)
+    fpr, tpr, thresholds = metrics.roc_curve(y, scores1)
     roc_auc = metrics.auc(fpr, tpr)
     
+    a = np.searchsorted(fpr, 0.3)
+    print(a)
+    print(thresholds[a])
     print()
     
     plt.figure(figsize=(8, 6))
