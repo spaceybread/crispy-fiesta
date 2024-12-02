@@ -61,7 +61,46 @@ impl Fuzzy {
         let result = hash.finalize();
         result.to_vec();
         hex::encode(result)
-    }   
+    }
+
+    pub fn gen_oversize(&self, vecs: Vec<f64>) -> (Vec<Vec<f64>>, Vec<String>) {
+        if self.lattice.dim < 1 {panic!("what are you doing");}
+        let split = self.split_and_pad(vecs, self.lattice.dim as usize, 0.0);
+        let mut helpers = vec![];
+        let mut keys = vec![];
+
+        for vec in split {
+            let mut rdm = self.random_vector(vec.len() as usize);
+            rdm = self.lattice.closest(rdm.clone());
+            let helper = self.vector_subtraction(rdm.clone(), vec.clone());
+            helpers.push(helper);
+            keys.push(self.hash_vector(rdm));
+        }
+        
+        return (helpers, keys);
+    }
+    
+    pub fn recov_oversize(&self, helpers: Vec<Vec<f64>>, vec: Vec<f64>) -> Vec<String> {
+        if self.lattice.dim < 1 {panic!("what are you doing");}
+        let vecs = self.split_and_pad(vec, self.lattice.dim as usize, 0.0);
+
+        let mut recovs = vec![];
+        for i in 0..vecs.len() {
+            let mut out = self.vector_addition(helpers[i].clone(), vecs[i].clone());
+            out = self.lattice.closest(out.clone());
+            recovs.push(self.hash_vector(out));
+        }
+        return recovs;
+    }
+    
+    
+    fn split_and_pad(&self, vec: Vec<f64>, chunk_size: usize, pad_value: f64) -> Vec<Vec<f64>> {
+        let mut result = vec![vec![pad_value; chunk_size]; (vec.len() + chunk_size - 1) / chunk_size];
+        for (i, &val) in vec.iter().enumerate() {
+            result[i / chunk_size][i % chunk_size] = val;
+        }
+        return result;
+    }
 }
 
 impl Clone for Fuzzy {

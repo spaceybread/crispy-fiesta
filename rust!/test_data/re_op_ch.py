@@ -49,7 +49,7 @@ def _read_data():
 def compute_roc(npz_file, file_name):
     d, ids = _load_data(npz_file, file_name)
     dim = d.shape[1]-2
-    n = 2500
+    n = 200
     intra_pairs = _sample(ids, n, 2).reshape((n, 2))
     inter_pairs = _sample(ids, 2*n, 1).reshape((n, 2))
 
@@ -59,15 +59,15 @@ def compute_roc(npz_file, file_name):
     
     scores1 = _euclidian_dist(v1, v2)
     scores2 = _dot_dist(v1, v2)
-    #$with open("matches/v1.txt", "w") as file:
-    #    for arr in v1:
-    #        line = ",".join(map(str, arr))
-    #        file.write(line + "\n")
-    #
-    #with open("matches/v2.txt", "w") as file:
-    #    for arr in v2:
-    #        line = ",".join(map(str, arr))
-    #        file.write(line + "\n")
+    with open("matches/v1.txt", "w") as file:
+        for arr in v1:
+            line = ",".join(map(str, arr))
+            file.write(line + "\n")
+    
+    with open("matches/v2.txt", "w") as file:
+        for arr in v2:
+            line = ",".join(map(str, arr))
+            file.write(line + "\n")
     
     #v1, v2, scores3 = _read_data()
     
@@ -81,7 +81,8 @@ def compute_roc(npz_file, file_name):
     print(a)
     print(thresholds[a])
     print()
-    
+    print(scores1)
+    print(scores2)
     plt.figure(figsize=(8, 6))
     plt.plot(fpr, tpr, color='darkorange', lw=2, label=f'ROC curve (area = {roc_auc:.2f})')
     plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')

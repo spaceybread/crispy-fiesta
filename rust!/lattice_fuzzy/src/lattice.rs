@@ -4,7 +4,8 @@ pub struct Lattice {
     name: String,
     matrix: Vec<f64>,
     pub dim:i32,
-    pub scale: f64
+    pub scale: f64,
+    init: bool
 }
 
 impl Lattice {
@@ -17,6 +18,13 @@ impl Lattice {
             matrix: vec![0.0],
             dim: 0,
             scale: scale,
+            init: false,
+        }
+    }
+
+    fn check_init(&self) {
+        if self.init == false {
+            panic!("Lattice has to be initialised!");
         }
     }
 
@@ -33,9 +41,10 @@ impl Lattice {
         if self.name == Self::GAUSS {
             self.dim = -1;
         }
+        self.init = true;
     }
     
-    pub fn round(&self, vec: Vec<f64>) -> Vec<f64> {
+    fn round(&self, vec: Vec<f64>) -> Vec<f64> {
         vec.into_iter()
             .map(|x| (x / self.scale).round() * self.scale)
             .collect()
@@ -61,6 +70,7 @@ impl Lattice {
     }
 
     pub fn split_and_pad(&self, vec: Vec<f64>, chunk_size: usize) -> Vec<Vec<f64>> {
+        self.check_init();
         let mut result = vec![vec![0.0; chunk_size]; (vec.len() + chunk_size - 1) / chunk_size];
         for (i, &val) in vec.iter().enumerate() {
             result[i / chunk_size][i % chunk_size] = val;
@@ -69,7 +79,7 @@ impl Lattice {
     }
 
     pub fn closest(&self, vector: Vec<f64>) -> Vec<f64> {
-
+        self.check_init();
         if self.name == Self::GAUSS {
             return self.closest_gauss(vector);
         }
@@ -90,6 +100,7 @@ impl Clone for Lattice {
             matrix: self.matrix.clone(),
             dim: self.dim,
             scale: self.scale,
+            init: false
         }
     }
 }
