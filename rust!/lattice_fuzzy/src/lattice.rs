@@ -3,7 +3,7 @@ use nalgebra::{DMatrix, DVector};
 pub struct Lattice {
     name: String,
     matrix: Vec<f64>,
-    pub dim:i32,
+    pub dim: i32,
     pub scale: f64,
     init: bool
 }

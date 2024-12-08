@@ -13,19 +13,19 @@ impl Fuzzy {
         }
     }
 
-    pub fn gen(&self, vec: Vec<f64>) -> (Vec<f64>, String) {
+    pub fn gen(&self, vec: Vec<f64>) -> (Vec<f64>, Vec<f64>) {
         let mut rdm = self.random_vector(vec.len() as usize);
         rdm = self.lattice.closest(rdm.clone());
         let helper = self.vector_subtraction(rdm.clone(), vec.clone());
         
-        return (helper, self.hash_vector(rdm))
+        return (helper, rdm)
     }
     
-    pub fn recov(&self, helper: Vec<f64>, vec: Vec<f64>) -> String {
+    pub fn recov(&self, helper: Vec<f64>, vec: Vec<f64>) -> Vec<f64> {
         let mut out = self.vector_addition(helper, vec);
         out = self.lattice.closest(out.clone());
         
-        return self.hash_vector(out);
+        return out;
     }
 
     fn vector_subtraction(&self, a: Vec<f64>, b: Vec<f64>) -> Vec<f64> {
