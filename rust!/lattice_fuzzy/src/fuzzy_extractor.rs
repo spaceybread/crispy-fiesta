@@ -13,19 +13,19 @@ impl Fuzzy {
         }
     }
 
-    pub fn gen(&self, vec: Vec<f64>) -> (Vec<f64>, Vec<f64>) {
+    pub fn gen(&self, vec: Vec<f64>) -> (Vec<f64>, String) {
         let mut rdm = self.random_vector(vec.len() as usize);
         rdm = self.lattice.closest(rdm.clone());
         let helper = self.vector_subtraction(rdm.clone(), vec.clone());
         
-        return (helper, rdm)
+        return (helper, self.hash_vector_2(rdm))
     }
     
-    pub fn recov(&self, helper: Vec<f64>, vec: Vec<f64>) -> Vec<f64> {
+    pub fn recov(&self, helper: Vec<f64>, vec: Vec<f64>) -> String {
         let mut out = self.vector_addition(helper, vec);
         out = self.lattice.closest(out.clone());
         
-        return out;
+        return self.hash_vector_2(out);
     }
 
     fn vector_subtraction(&self, a: Vec<f64>, b: Vec<f64>) -> Vec<f64> {
@@ -60,6 +60,18 @@ impl Fuzzy {
         }
         let result = hash.finalize();
         result.to_vec();
+        hex::encode(result)
+    }
+
+    pub fn hash_vector_2(&self, vec: Vec<f64>) -> String {
+        let mut hash = Sha256::new();
+        let mut weird_al = 0.0; 
+        for &n in &vec {
+            weird_al += n;
+            hash.update(weird_al.to_le_bytes());
+        }
+        let result = hash.finalize();
+        // return weird_al.to_string();
         hex::encode(result)
     }
 

@@ -109,7 +109,7 @@ fn _heimerdinger_fan() {
     let _ = file_loader::make_file_from_i32_vec(matches, "../../test_data/matches/pairs_leech.txt");
 }
 
-fn debug() {
+fn _debug() {
     let mut lat = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), 1.0);
     lat.init();
     let fuzzy = fuzzy_extractor::Fuzzy::new(lat);
@@ -169,11 +169,20 @@ fn sweep() {
         if i % 10 == 0 {println!("{}", i);}
         results.push(sweep_func(jaybe.clone(), jaybe_not.clone(), i as f64 / 10000.0));
     }
-    file_loader::write_tuples_to_file(results, "../../test_data/matches/pairs.txt");
+    let _ = file_loader::write_tuples_to_file(results, "../../test_data/matches/pairs.txt");
+}
+fn sweep_3() {
+    let jaybe = file_loader::get_vectors_from_file("../../test_data/matches/v1.txt");
+    let jaybe_not = file_loader::get_vectors_from_file("../../test_data/matches/v2.txt");
+    let mut results = vec![];
+    results.push(sweep_func(jaybe.clone(), jaybe_not.clone(), 0.3));
+
+    println!("{:?}", results);
 }
 
 fn main() {
-    sweep();
+    sweep_3();
+    // sweep();
     // viktor_nation();
     // _heimerdinger_fan();
     // debug();
