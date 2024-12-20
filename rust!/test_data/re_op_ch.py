@@ -49,7 +49,7 @@ def _read_data():
 def compute_roc(npz_file, file_name):
     d, ids = _load_data(npz_file, file_name)
     dim = d.shape[1]-2
-    n = 200
+    n = 500
     intra_pairs = _sample(ids, n, 2).reshape((n, 2))
     inter_pairs = _sample(ids, 2*n, 1).reshape((n, 2))
 
@@ -59,19 +59,19 @@ def compute_roc(npz_file, file_name):
     
     scores1 = _euclidian_dist(v1, v2)
     scores2 = _dot_dist(v1, v2)
-    with open("matches/v1.txt", "w") as file:
+    with open("matches/v1_1000.txt", "w") as file:
         for arr in v1:
             line = ",".join(map(str, arr))
             file.write(line + "\n")
     
-    with open("matches/v2.txt", "w") as file:
+    with open("matches/v2_1000.txt", "w") as file:
         for arr in v2:
             line = ",".join(map(str, arr))
             file.write(line + "\n")
     
     #v1, v2, scores3 = _read_data()
     
-    y = [0] * n + [1] * n
+    #y = [0] * n + [1] * n
     #scores1 = _euclidian_dist(v1, v2)
     #scores2 = _dot_dist(v1, v2)
     fpr, tpr, thresholds = metrics.roc_curve(y, scores1)

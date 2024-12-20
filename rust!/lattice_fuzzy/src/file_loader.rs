@@ -37,10 +37,10 @@ pub fn make_file_from_i32_vec(data: Vec<i32>, path: &str) -> io::Result<()>  {
     Ok(())
 }
 
-pub fn write_tuples_to_file(tuples: Vec<(f64, f64, f64)>, file_path: &str) -> io::Result<()> {
+pub fn write_tuples_to_file(tuples: Vec<(f64, f64, f64, f64, f64)>, file_path: &str) -> io::Result<()> {
     let mut file = File::create(file_path)?;
-    for (x, y, z) in tuples {
-        writeln!(file, "{:.6} {:.6} {:.6}", x, y, z)?;
+    for (x, y, z, a, b) in tuples {
+        writeln!(file, "{:.6} {:.6} {:.6} {:.6} {:.6}", x, y, z, a, b)?;
     }
     Ok(())
 }
