@@ -144,11 +144,9 @@ impl Bucket {
         let ids = self.get_bucket_id_with_slack(vec.clone());
         
         let mut out = vec![];
-        println!("{}", ids.len());
         for id in ids {
             if self.bucket.contains_key(&id) {
                 if let Some(x) = self.bucket.get_mut(&id) {
-                    println!("vecs: {}", x.len());
                     out.append(&mut x.clone());   
                 
                 } 

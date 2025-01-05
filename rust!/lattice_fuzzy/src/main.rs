@@ -209,7 +209,7 @@ fn sweep() {
     let _ = file_loader::write_tuples_to_file(results, "../../test_data/matches/pairs_with_euclid_1000_1.txt");
 }
 
-fn sweep_3() {
+fn _sweep_3() {
     let jaybe = file_loader::get_vectors_from_file("../../test_data/matches/v1.txt");
     let jaybe_not = file_loader::get_vectors_from_file("../../test_data/matches/v2.txt");
     let euclid_distances = compute_euclid_squared(jaybe.clone(), jaybe_not.clone());
@@ -219,10 +219,104 @@ fn sweep_3() {
     println!("{:?}", results);
 }
 
+fn bucket_speed_test() -> Vec<i32> {
+    let scale = 0.274100; // from the ROC curve
+    let mut lat = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), scale);
+    let fuzzy = fuzzy_extractor::Fuzzy::new(lat);
+
+    let mut lat_b = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), scale / 2.0);
+    let mut bucket = bucket::Bucket::new(2, lat_b);
+    
+    // COMPLETED INIT
+    println!("INIT COMPLETED");
+    
+    // actual testing 
+    let jaybe = file_loader::get_vectors_from_file("../../test_data/matches/v1_1000.txt");
+    let jaybe_not = file_loader::get_vectors_from_file("../../test_data/matches/v2_1000.txt");
+
+    for vec in &jaybe_not {
+        bucket.add(vec.clone());
+    }
+
+    println!("vectors loaded!"); 
+    let test_cases = vec![jaybe[0].clone(), jaybe[168].clone(), jaybe[314].clone(), jaybe[233].clone(), jaybe[399].clone()];
+    let mut match_count = vec![];
+
+    for i in 0..test_cases.len() {
+        let v1 = test_cases[i].clone();
+        let res = fuzzy.gen(v1.clone());
+        let cands = bucket.get_candidates_with_slack(v1.clone());
+        
+        let mut matches = 0;
+        for j in 0..cands.len() {
+            let v2 = cands[j].clone(); 
+            let rec = fuzzy.recov(res.0.clone(), v2);
+
+            if rec == res.1 {
+                matches += 1; 
+            }
+        }
+        println!("{}/{} matches found for the {}th test case", matches, cands.len(), i + 1);
+        match_count.push(matches);
+    }
+    return match_count;
+}
+
+fn raw_speed_test() -> Vec<i32> {
+    let scale = 0.274100; // from the ROC curve
+    let mut lat = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), scale);
+    let fuzzy = fuzzy_extractor::Fuzzy::new(lat);
+    // COMPLETED INIT
+    println!("INIT COMPLETED");
+
+    // actual testing
+    let jaybe = file_loader::get_vectors_from_file("../../test_data/matches/v1_1000.txt");
+    let jaybe_not = file_loader::get_vectors_from_file("../../test_data/matches/v2_1000.txt");
+
+    let test_cases = vec![jaybe[0].clone(), jaybe[168].clone(), jaybe[314].clone(), jaybe[233].clone(), jaybe[399].clone()];
+    let mut match_count = vec![];
+
+    for i in 0..test_cases.len() {
+        let v1 = test_cases[i].clone();
+        let res = fuzzy.gen(v1.clone());
+        
+        let mut matches = 0;
+        for j in 0..jaybe_not.len() {
+            let v2 = jaybe_not[j].clone(); 
+            let rec = fuzzy.recov(res.0.clone(), v2);
+
+            if rec == res.1 {
+                matches += 1; 
+            }
+        }
+        println!("{} matches found for the {}th test case", matches, i + 1);
+        match_count.push(matches);
+    }
+    return match_count;
+}
+
+fn check_bucket_acc() {
+    let mut ct = 0;
+    let mut trials = 100;
+    
+    for i in 0..trials {
+        if i % 10 == 0 {
+            println!("DONE WITH {} TESTS", i);
+        }
+        if vec![20, 5, 5, 3, 8] == bucket_speed_test() {
+            ct += 1;
+        }
+    }
+    println!("accuracy of buckets: {}/{}", ct, trials);
+}
+
 fn main() {
     // sweep_3();
-    sweep();
+    // sweep();
     // viktor_nation();
     // _heimerdinger_fan();
     // debug();
+    // raw_speed_test();
+    // bucket_speed_test();
+    check_bucket_acc();
 }

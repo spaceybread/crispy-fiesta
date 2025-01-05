@@ -13,13 +13,15 @@ impl Lattice {
     const GAUSS: &'static str = "GAUSS_INF";
 
     pub fn new(name: String, scale: f64) -> Self {
-        Lattice {
+        let mut lattice = Lattice {
             name: name,
             matrix: vec![0.0],
             dim: 0,
             scale: scale,
             init: false,
-        }
+        };
+        lattice.init();
+        lattice
     }
 
     fn check_init(&self) {
@@ -95,12 +97,14 @@ impl Lattice {
 
 impl Clone for Lattice {
     fn clone(&self) -> Lattice {
-        Lattice {
+        let mut lattice = Lattice {
             name: self.name.clone(),
             matrix: self.matrix.clone(),
             dim: self.dim,
             scale: self.scale,
             init: false
-        }
+        };
+        lattice.init();
+        lattice
     }
 }
