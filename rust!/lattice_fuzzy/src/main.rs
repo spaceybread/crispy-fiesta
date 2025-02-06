@@ -192,21 +192,21 @@ fn sweep_func(jaybe: Vec<Vec<f64>>, jaybe_not: Vec<Vec<f64>>, scale: f64, euclid
 }
 
 fn sweep() {
-    let jaybe = file_loader::get_vectors_from_file("../../test_data/matches/v1_1000.txt");
-    let jaybe_not = file_loader::get_vectors_from_file("../../test_data/matches/v2_1000.txt");
+    let jaybe = file_loader::get_vectors_from_file("../../test_data/voice/matches/v1_1000.txt");
+    let jaybe_not = file_loader::get_vectors_from_file("../../test_data/voice/matches/v2_1000.txt");
     let euclid_distances = compute_euclid_squared(jaybe.clone(), jaybe_not.clone());
 
-    let results: Vec<_> = (0..10000)
+    let results: Vec<_> = (0..2000)
         .into_par_iter()
         .map(|i| {
             if i % 10 == 0 {
                 println!("{}", i);
             }
-            sweep_func(jaybe.clone(), jaybe_not.clone(), i as f64 / 10000.0, euclid_distances.clone())
+            sweep_func(jaybe.clone(), jaybe_not.clone(), (i as f64) / 10.0 , euclid_distances.clone())
         })
         .collect();
 
-    let _ = file_loader::write_tuples_to_file(results, "../../test_data/matches/pairs_with_euclid_1000_1.txt");
+    let _ = file_loader::write_tuples_to_file(results, "../../test_data/voice/matches/voice_matches.txt");
 }
 
 fn _sweep_3() {
@@ -224,7 +224,7 @@ fn bucket_speed_test() -> Vec<i32> {
     let mut lat = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), scale);
     let fuzzy = fuzzy_extractor::Fuzzy::new(lat);
 
-    let mut lat_b = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), scale / 2.0);
+    let mut lat_b = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), scale / 3.0);
     let mut bucket = bucket::Bucket::new(2, lat_b);
     
     // COMPLETED INIT
@@ -232,7 +232,7 @@ fn bucket_speed_test() -> Vec<i32> {
     
     // actual testing 
     let jaybe = file_loader::get_vectors_from_file("../../test_data/matches/v1_1000.txt");
-    let jaybe_not = file_loader::get_vectors_from_file("../../test_data/matches/v2_1000.txt");
+    let jaybe_not = file_loader::get_vectors_from_file("../../test_data/embeddings.txt");
 
     for vec in &jaybe_not {
         bucket.add(vec.clone());
@@ -271,7 +271,7 @@ fn raw_speed_test() -> Vec<i32> {
 
     // actual testing
     let jaybe = file_loader::get_vectors_from_file("../../test_data/matches/v1_1000.txt");
-    let jaybe_not = file_loader::get_vectors_from_file("../../test_data/matches/v2_1000.txt");
+    let jaybe_not = file_loader::get_vectors_from_file("../../test_data/embeddings.txt");
 
     let test_cases = vec![jaybe[0].clone(), jaybe[168].clone(), jaybe[314].clone(), jaybe[233].clone(), jaybe[399].clone()];
     let mut match_count = vec![];
@@ -312,11 +312,11 @@ fn check_bucket_acc() {
 
 fn main() {
     // sweep_3();
-    // sweep();
+    sweep();
     // viktor_nation();
     // _heimerdinger_fan();
     // debug();
     // raw_speed_test();
     // bucket_speed_test();
-    check_bucket_acc();
+    // check_bucket_acc();
 }
