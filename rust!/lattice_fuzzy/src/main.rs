@@ -1,13 +1,14 @@
-use rayon::prelude::*;
+// use rayon::prelude::*;
 mod fuzzy_extractor;
 mod file_loader;
+use std::env;
 mod lattice;
 mod bucket;
 
 static GAUSS_LATTICE_NAME: &str = "GAUSS_INF";
 static LEECH_24_LATTICE_NAME: &str = "LEECH_24";
 
-fn _rehersal() {
+fn rehersal() {
     let test_data = file_loader::get_vectors_from_file("../../test_data/embeddings.txt");
     println!("Size: {}", test_data.len());
     let mut lat = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), 2.0 * 0.06);
@@ -37,7 +38,7 @@ fn _rehersal() {
     }
 }
 
-fn _viktor_nation() {
+fn viktor_nation() {
     let mut lat = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), 0.3);
     lat.init();
     // 2.0 * 0.55
@@ -69,7 +70,7 @@ fn _viktor_nation() {
     // let _ = file_loader::make_file_from_i32_vec(matches, "../../test_data/matches/pairs.txt");
 }
 
-fn _heimerdinger_fan() {
+fn heimerdinger_fan() {
     let mut lat = lattice::Lattice::new(LEECH_24_LATTICE_NAME.to_string(), 2.0 * 0.6175562);
     lat.init();
     // 2.0 * 0.55
@@ -110,7 +111,7 @@ fn _heimerdinger_fan() {
     let _ = file_loader::make_file_from_i32_vec(matches, "../../test_data/matches/pairs_leech.txt");
 }
 
-fn _debug() {
+fn debug() {
     let mut lat = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), 1.0);
     lat.init();
     let fuzzy = fuzzy_extractor::Fuzzy::new(lat);
@@ -126,8 +127,6 @@ fn _debug() {
     } else {
         println!("no match!");
     }
-
-
 }
 
 fn compute_euclid_squared(jaybe: Vec<Vec<f64>>, jaybe_not: Vec<Vec<f64>>) -> Vec<f64> {
@@ -191,25 +190,25 @@ fn sweep_func(jaybe: Vec<Vec<f64>>, jaybe_not: Vec<Vec<f64>>, scale: f64, euclid
     return (scale, 2.0 * true_count as f64 / data_size as f64, 2.0 * false_count as f64 / data_size as f64, 2.0 * true_count_euclid as f64 / data_size as f64, 2.0 * false_count_euclid as f64 / data_size as f64)
 }
 
-fn sweep() {
-    let jaybe = file_loader::get_vectors_from_file("../../test_data/voice/matches/v1_1000.txt");
-    let jaybe_not = file_loader::get_vectors_from_file("../../test_data/voice/matches/v2_1000.txt");
-    let euclid_distances = compute_euclid_squared(jaybe.clone(), jaybe_not.clone());
+// fn sweep() {
+//     let jaybe = file_loader::get_vectors_from_file("../../test_data/voice/matches/v1_1000.txt");
+//     let jaybe_not = file_loader::get_vectors_from_file("../../test_data/voice/matches/v2_1000.txt");
+//     let euclid_distances = compute_euclid_squared(jaybe.clone(), jaybe_not.clone());
 
-    let results: Vec<_> = (0..2000)
-        .into_par_iter()
-        .map(|i| {
-            if i % 10 == 0 {
-                println!("{}", i);
-            }
-            sweep_func(jaybe.clone(), jaybe_not.clone(), (i as f64) / 10.0 , euclid_distances.clone())
-        })
-        .collect();
+//     let results: Vec<_> = (0..2000)
+//         .into_par_iter()
+//         .map(|i| {
+//             if i % 10 == 0 {
+//                 println!("{}", i);
+//             }
+//             sweep_func(jaybe.clone(), jaybe_not.clone(), (i as f64) / 10.0 , euclid_distances.clone())
+//         })
+//         .collect();
 
-    let _ = file_loader::write_tuples_to_file(results, "../../test_data/voice/matches/voice_matches.txt");
-}
+//     let _ = file_loader::write_tuples_to_file(results, "../../test_data/voice/matches/voice_matches.txt");
+// }
 
-fn _sweep_3() {
+fn sweep_3() {
     let jaybe = file_loader::get_vectors_from_file("../../test_data/matches/v1.txt");
     let jaybe_not = file_loader::get_vectors_from_file("../../test_data/matches/v2.txt");
     let euclid_distances = compute_euclid_squared(jaybe.clone(), jaybe_not.clone());
@@ -310,13 +309,43 @@ fn check_bucket_acc() {
     println!("accuracy of buckets: {}/{}", ct, trials);
 }
 
+fn io(scale: f64, a: Vec<f64>, b: Vec<f64>) {
+    let mut lat = lattice::Lattice::new(LEECH_24_LATTICE_NAME.to_string(), scale);
+    lat.init();
+    let fuzzy = fuzzy_extractor::Fuzzy::new(lat);
+
+    let res = fuzzy.gen_oversize(a.clone());
+    let rec = fuzzy.recov_oversize(res.0.clone(), b);
+
+    if rec == res.1 {
+        println!("match!");
+    } else {
+        println!("no match!");
+    }
+}
+
+fn parse_vec(s: &str) -> Vec<f64> {
+    s.split_whitespace()
+     .map(|x| x.parse::<f64>().expect("Invalid float"))
+     .collect()
+}
+
 fn main() {
-    // sweep_3();
-    sweep();
-    // viktor_nation();
-    // _heimerdinger_fan();
-    // debug();
-    // raw_speed_test();
-    // bucket_speed_test();
-    // check_bucket_acc();
+    let args: Vec<String> = env::args().collect();
+
+    if args.len() != 4 {
+        eprintln!("Usage: {} <scale> \"<a_vec>\" \"<b_vec>\"", args[0]);
+        std::process::exit(1);
+    }
+
+    let scale = args[1].parse::<f64>().expect("Invalid scale");
+    let a = parse_vec(&args[2]);
+    let b = parse_vec(&args[3]);
+    
+    if a.len() != 512 || b.len() != 512 {
+        eprintln!("Error: a and b must be 512-dimensional vectors");
+        std::process::exit(1);
+    }
+
+    io(scale, a, b); 
 }
