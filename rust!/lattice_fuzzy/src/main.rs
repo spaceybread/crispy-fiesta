@@ -7,6 +7,7 @@ mod bucket;
 
 static GAUSS_LATTICE_NAME: &str = "GAUSS_INF";
 static LEECH_24_LATTICE_NAME: &str = "LEECH_24";
+static E8_LATTICE_NAME: &str = "E8";
 
 fn rehersal() {
     let test_data = file_loader::get_vectors_from_file("../../test_data/embeddings.txt");
@@ -310,7 +311,7 @@ fn check_bucket_acc() {
 }
 
 fn io(scale: f64, a: Vec<f64>, b: Vec<f64>) {
-    let mut lat = lattice::Lattice::new(LEECH_24_LATTICE_NAME.to_string(), scale);
+    let mut lat = lattice::Lattice::new(E8_LATTICE_NAME.to_string(), scale);
     lat.init();
     let fuzzy = fuzzy_extractor::Fuzzy::new(lat);
 
@@ -342,8 +343,8 @@ fn main() {
     let a = parse_vec(&args[2]);
     let b = parse_vec(&args[3]);
     
-    if a.len() != 512 || b.len() != 512 {
-        eprintln!("Error: a and b must be 512-dimensional vectors");
+    if a.len() != 192 || b.len() != 192 {
+        eprintln!("Error: a and b must be 192-dimensional vectors");
         std::process::exit(1);
     }
 
