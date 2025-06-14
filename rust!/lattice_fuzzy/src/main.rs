@@ -368,6 +368,6 @@ fn main() {
         eprintln!("Error: a and b must be 192-dimensional vectors");
         std::process::exit(1);
     }
-    io_gauss(scale, a, b);
-    // io_gauss(scale, a.iter().take(24).cloned().collect(), b.iter().take(24).cloned().collect()); 
+    // io_gauss(scale, a, b);
+    io_gauss(scale, a.iter().take(24).cloned().collect(), b.iter().take(24).cloned().collect()); 
 }
