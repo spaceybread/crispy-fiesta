@@ -311,7 +311,7 @@ fn check_bucket_acc() {
 }
 
 fn io(scale: f64, a: Vec<f64>, b: Vec<f64>) {
-    let mut lat = lattice::Lattice::new(E8_LATTICE_NAME.to_string(), scale);
+    let mut lat = lattice::Lattice::new(LEECH_24_LATTICE_NAME.to_string(), scale);
     lat.init();
     let fuzzy = fuzzy_extractor::Fuzzy::new(lat);
 
@@ -323,7 +323,7 @@ fn io(scale: f64, a: Vec<f64>, b: Vec<f64>) {
     //                 .filter(|(a, b)| a == b)
     //                 .count();
 
-    if res.1[0] == rec[0] {
+    if res.1 == rec {
         println!("match!");
     } else {
         println!("no match!");
@@ -369,5 +369,5 @@ fn main() {
         std::process::exit(1);
     }
     // io_gauss(scale, a, b);
-    io_gauss(scale, a.iter().take(24).cloned().collect(), b.iter().take(24).cloned().collect()); 
+    io(scale, a.iter().take(24).cloned().collect(), b.iter().take(24).cloned().collect()); 
 }
