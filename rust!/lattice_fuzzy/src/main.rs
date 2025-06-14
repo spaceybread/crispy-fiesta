@@ -318,12 +318,33 @@ fn io(scale: f64, a: Vec<f64>, b: Vec<f64>) {
     let res = fuzzy.gen_oversize(a.clone());
     let rec = fuzzy.recov_oversize(res.0.clone(), b);
 
-    if rec == res.1 {
+    // let match_cnt = rec.iter()
+    //                 .zip(res.1.iter())
+    //                 .filter(|(a, b)| a == b)
+    //                 .count();
+
+    if res.1[0] == rec[0] {
         println!("match!");
     } else {
         println!("no match!");
     }
 }
+
+fn io_gauss(scale: f64, a: Vec<f64>, b: Vec<f64>) {
+    let mut lat = lattice::Lattice::new(GAUSS_LATTICE_NAME.to_string(), scale);
+    lat.init();
+    let fuzzy = fuzzy_extractor::Fuzzy::new(lat);
+
+    let res = fuzzy.gen(a.clone());
+    let rec = fuzzy.recov(res.0.clone(), b);
+
+    if res.1 == rec {
+        println!("match!");
+    } else {
+        println!("no match!");
+    }
+}
+
 
 fn parse_vec(s: &str) -> Vec<f64> {
     s.split_whitespace()
@@ -347,6 +368,6 @@ fn main() {
         eprintln!("Error: a and b must be 192-dimensional vectors");
         std::process::exit(1);
     }
-
-    io(scale, a, b); 
+    io_gauss(scale, a, b);
+    // io_gauss(scale, a.iter().take(24).cloned().collect(), b.iter().take(24).cloned().collect()); 
 }
